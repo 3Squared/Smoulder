@@ -1,6 +1,6 @@
 ﻿namespace Smoulder.Interfaces
 {
-    internal interface IAggregator
+    public interface IDistributor
     {
     }
 }
