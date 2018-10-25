@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Smoulder.Interfaces
+﻿namespace Smoulder.Interfaces
 {
     internal interface ISmoulderFactory
     {
+        Smoulder Build();
     }
 }
