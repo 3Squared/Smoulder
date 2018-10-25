@@ -2,6 +2,6 @@
 {
     internal interface ISmoulderFactory
     {
-        Smoulder Build();
+        Smoulder Build(ILoader loader, IProcessor processor, IDistributor distributor);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Smoulder.Interfaces
 {
-    internal interface IProcessor
+    public interface IProcessor
     {
     }
 }

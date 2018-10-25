@@ -4,7 +4,7 @@ namespace Smoulder
 {
     public class SmoulderFactory : ISmoulderFactory
     {
-        public Smoulder Build()
+        public Smoulder Build(ILoader loader, IProcessor processor, IDistributor distributor)
         {
             throw new System.NotImplementedException();
         }
