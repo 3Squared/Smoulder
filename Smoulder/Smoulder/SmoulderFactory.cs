@@ -1,4 +1,5 @@
-﻿using Smoulder.Interfaces;
+﻿using System.Collections.Concurrent;
+using Smoulder.Interfaces;
 
 namespace Smoulder
 {
@@ -6,7 +7,21 @@ namespace Smoulder
     {
         public Smoulder Build(ILoader loader, IProcessor processor, IDistributor distributor)
         {
-            throw new System.NotImplementedException();
+            //Create Queues
+            ConcurrentQueue<IProcessDataObject> processorQueue = new ConcurrentQueue<IProcessDataObject>();
+            ConcurrentQueue<IDistributeDataObject> distributorQueue = new ConcurrentQueue<IDistributeDataObject>();
+
+            //Hooks units up to Queues
+            loader.RegisterProcessorQueue(processorQueue);
+            processor.RegisterProcessorQueue(processorQueue);
+
+            processor.RegisterDistributorQueue(distributorQueue);
+            distributor.RegisterDistributorQueue(distributorQueue);
+
+            //Creates a Smoulder encapsulating the units
+            var smoulder = new Smoulder(loader, processor, distributor);
+            //Returns the Smoulder
+            return smoulder;
         }
     }
 }

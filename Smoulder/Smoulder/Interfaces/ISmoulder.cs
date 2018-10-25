@@ -2,5 +2,7 @@
 {
     public interface ISmoulder
     {
+        void Start();
+        void Stop();
     }
 }
