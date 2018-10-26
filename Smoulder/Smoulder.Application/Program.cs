@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Smoulder.Application.ConcreteClasses;
 
-namespace Smoulder.Application.ConcreteClasses
+namespace Smoulder.Application
 {
     class Program
     {
@@ -22,16 +23,18 @@ namespace Smoulder.Application.ConcreteClasses
                 GetReport(smoulder);
             }
 
-            smoulder.Stop();
+            Task.Factory.StartNew(() => smoulder.Stop());
+
             GetReport(smoulder);
 
-            Task.Delay(5000);
+            System.Threading.Thread.Sleep(10000);
+            GetReport(smoulder);
         }
 
         public static void GetReport(Smoulder smoulder)
         {
-            Console.WriteLine("Distributor Items: " + smoulder.DistributorQueueItems);
             Console.WriteLine("Processor Items: " + smoulder.ProcessorQueueItems);
+            Console.WriteLine("Distributor Items: " + smoulder.DistributorQueueItems);
         }
     }
 }

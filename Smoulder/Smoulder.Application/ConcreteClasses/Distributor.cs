@@ -25,8 +25,23 @@ namespace Smoulder.Application.ConcreteClasses
 
         public override async Task Finalise()
         {
-            Random rng = new Random();
-            Task.Delay(rng.Next(500, 1000));
+            Console.WriteLine("Starting Distributor finalisation." + DistributorQueue.Count + " items left to process");
+
+            while (DistributorQueue.Count != 0)
+            {
+                if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
+                {
+                    var data = (DistributeDataObject)queueItem;
+                    //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
+                    Random rng = new Random();
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine("Finished Distributor finalisation." + DistributorQueue.Count + " items left to process");
         }
     }
 }

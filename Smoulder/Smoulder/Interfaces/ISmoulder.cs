@@ -1,8 +1,10 @@
-﻿namespace Smoulder.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Smoulder.Interfaces
 {
     public interface ISmoulder
     {
-        void Start();
-        void Stop();
+        Task Start();
+        Task Stop();
     }
 }

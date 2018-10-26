@@ -22,8 +22,7 @@ namespace Smoulder.Application.ConcreteClasses
 
         public override async Task Finalise()
         {
-            Random rng = new Random();
-            Task.Delay(rng.Next(500, 1000));
+            Task.Delay(500);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Smoulder
             distributorCancellationTokenSource = new CancellationTokenSource();
         }
 
-        public async void Start()
+        public async Task Start()
         {
             lock (this)
             {
@@ -45,18 +45,19 @@ namespace Smoulder
             }
         }
 
-        public async void Stop()
+        public async Task Stop()
         {
-            Console.WriteLine("Shutdown Starting");
-            
+            Console.WriteLine("Shutdown loader Starting");
             loaderCancellationTokenSource.Cancel();
             var loaderStopTask = Task.Factory.StartNew(() => _loader.Finalise());
             await loaderStopTask;
 
+            Console.WriteLine("Shutdown processor Starting");
             processorCancellationTokenSource.Cancel();
             var processorStopTask = Task.Factory.StartNew(() => _processor.Finalise());
             await processorStopTask;
 
+            Console.WriteLine("Shutdown distributor Starting");
             distributorCancellationTokenSource.Cancel();
             var distributorStopTask = Task.Factory.StartNew(() => _distributor.Finalise());
             await distributorStopTask;
