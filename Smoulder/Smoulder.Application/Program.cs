@@ -32,7 +32,6 @@ namespace Smoulder.Application.ConcreteClasses
         {
             Console.WriteLine("Distributor Items: " + smoulder.DistributorQueueItems);
             Console.WriteLine("Processor Items: " + smoulder.ProcessorQueueItems);
-            Console.WriteLine("IsRunning: " + smoulder.IsRunning);
         }
     }
 }
