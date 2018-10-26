@@ -3,7 +3,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase : IDistributor
+    public abstract class DistributorBase : WorkerUnitBase, IDistributor
     {
         private ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 

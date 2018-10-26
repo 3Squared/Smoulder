@@ -2,7 +2,7 @@
 
 namespace Smoulder.Interfaces
 {
-    public interface IDistributor
+    public interface IDistributor : IWorkerUnit
     {
         void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue);
     }
