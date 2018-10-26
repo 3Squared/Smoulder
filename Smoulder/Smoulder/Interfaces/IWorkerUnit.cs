@@ -8,7 +8,7 @@ namespace Smoulder.Interfaces
     public interface IWorkerUnit
     {
         Task Start();
-        Task Action();
+        void Action();
         Task Stop();
     }
 }

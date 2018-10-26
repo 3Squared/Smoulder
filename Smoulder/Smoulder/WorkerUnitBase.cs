@@ -16,11 +16,11 @@ namespace Smoulder
         {
             while (!ShouldStop)
             {
-                await Task.Run(Action);
+                await Task.Run(() => Action());
             }
         }
 
-        public virtual async Task Action()
+        public virtual async void Action()
         {
             await Task.Delay(100);
         }

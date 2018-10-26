@@ -1,15 +1,16 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
 {
     public abstract class LoaderBase : WorkerUnitBase, ILoader
     {
-        private ConcurrentQueue<IProcessDataObject> _processorQueue;
+        public ConcurrentQueue<IProcessDataObject> ProcessorQueue;
 
         public void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue)
         {
-            _processorQueue = processorQueue;
+            ProcessorQueue = processorQueue;
         }
     }
 }

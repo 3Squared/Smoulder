@@ -5,17 +5,17 @@ namespace Smoulder
 {
     public abstract class ProcessorBase : WorkerUnitBase, IProcessor
     {
-        private ConcurrentQueue<IProcessDataObject> _processorQueue;
-        private ConcurrentQueue<IDistributeDataObject> _distributorQueue;
+        public ConcurrentQueue<IProcessDataObject> ProcessorQueue;
+        public ConcurrentQueue<IDistributeDataObject> DistributorQueue;
 
         public void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue)
         {
-            _processorQueue = processorQueue;
+            ProcessorQueue = processorQueue;
         }
 
         public void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue)
         {
-            _distributorQueue = distributorQueue;
+            DistributorQueue = distributorQueue;
         }
     }
 }

@@ -5,11 +5,11 @@ namespace Smoulder
 {
     public abstract class DistributorBase : WorkerUnitBase, IDistributor
     {
-        private ConcurrentQueue<IDistributeDataObject> _distributorQueue;
+        public ConcurrentQueue<IDistributeDataObject> DistributorQueue;
 
         public void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue)
         {
-            _distributorQueue = distributorQueue;
+            DistributorQueue = distributorQueue;
         }
     }
 }
