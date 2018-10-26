@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Smoulder.Application
+﻿namespace Smoulder.Application.ConcreteClasses
 {
     class Program
     {
@@ -8,6 +6,12 @@ namespace Smoulder.Application
         {
             var smoulderFactory = new SmoulderFactory();
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
+
+            smoulder.Start();
+
+            System.Threading.Thread.Sleep(2000);
+
+            smoulder.Stop();
         }
     }
 }
