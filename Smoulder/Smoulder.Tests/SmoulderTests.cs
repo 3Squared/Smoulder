@@ -29,7 +29,7 @@ namespace Smoulder.Tests
             //Act
             smoulder.Start();
 
-            System.Threading.Thread.Sleep(5000);
+            System.Threading.Thread.Sleep(100);
 
             smoulder.Stop();
 

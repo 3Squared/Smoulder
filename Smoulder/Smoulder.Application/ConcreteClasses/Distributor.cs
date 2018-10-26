@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
@@ -6,9 +7,7 @@ namespace Smoulder.Application.ConcreteClasses
 {
     public class Distributor : DistributorBase
     {
-        private int _count = 0;
-
-        public override void Action()
+        public override void Action(CancellationToken cancellationToken)
         {
             if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
             {
@@ -22,6 +21,12 @@ namespace Smoulder.Application.ConcreteClasses
                 Console.WriteLine("Distributor Skipped, Distributor Queue is empty: " + DistributorQueue.IsEmpty);
                 Task.Delay(50);
             }
+        }
+
+        public override async Task Finalise()
+        {
+            Random rng = new Random();
+            Task.Delay(rng.Next(500, 1000));
         }
     }
 }

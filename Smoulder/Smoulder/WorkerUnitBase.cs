@@ -1,28 +1,28 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
 {
     public class WorkerUnitBase : IWorkerUnit
     {
-        public bool ShouldStop = false;
 
-        public async Task Stop()
+        public virtual async Task Start(CancellationToken cancellationToken)
         {
-            ShouldStop = true;
-        }
-
-        public async Task Start()
-        {
-            while (!ShouldStop)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Run(() => Action());
+                await Task.Run(() => Action(cancellationToken));
             }
         }
 
-        public virtual async void Action()
+        public virtual async void Action(CancellationToken cancellationToken)
         {
             await Task.Delay(100);
+        }
+
+        public virtual async Task Finalise()
+        {
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Smoulder.Application.ConcreteClasses
 {
@@ -15,7 +16,7 @@ namespace Smoulder.Application.ConcreteClasses
 
             GetReport(smoulder);
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 50; i++)
             {
                 System.Threading.Thread.Sleep(100);
                 GetReport(smoulder);
@@ -23,6 +24,8 @@ namespace Smoulder.Application.ConcreteClasses
 
             smoulder.Stop();
             GetReport(smoulder);
+
+            Task.Delay(5000);
         }
 
         public static void GetReport(Smoulder smoulder)

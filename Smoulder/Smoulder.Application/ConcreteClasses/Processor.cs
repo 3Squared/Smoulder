@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
@@ -6,7 +7,7 @@ namespace Smoulder.Application.ConcreteClasses
 {
     public class Processor : ProcessorBase
     {
-        public override void Action()
+        public override void Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
             {
@@ -27,6 +28,16 @@ namespace Smoulder.Application.ConcreteClasses
             {
                 Console.WriteLine("Processor Skipped, Processor Queue is empty: " + ProcessorQueue.IsEmpty);
                 Task.Delay(50);
+            }
+        }
+
+        public override async Task Finalise()
+        {
+            Console.WriteLine("Starting Processor finalisation." + ProcessorQueue.Count + " items left to process");
+
+            while (ProcessorQueue.Count != 0)
+            {
+                
             }
         }
     }
