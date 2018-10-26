@@ -10,7 +10,7 @@ namespace Smoulder.Application.ConcreteClasses
         {
             if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
             {
-                Console.WriteLine("Processing");
+                //Console.WriteLine("Processing");
                 var data = (ProcessDataObject) queueItem;
                 var result = new DistributeDataObject
                 {
@@ -25,7 +25,7 @@ namespace Smoulder.Application.ConcreteClasses
             }
             else
             {
-                Console.WriteLine("Processor Skipped");
+                Console.WriteLine("Processor Skipped, Processor Queue is empty: " + ProcessorQueue.IsEmpty);
                 Task.Delay(50);
             }
         }

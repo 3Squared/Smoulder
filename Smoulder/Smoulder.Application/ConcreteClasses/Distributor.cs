@@ -13,13 +13,13 @@ namespace Smoulder.Application.ConcreteClasses
             if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
             {
                 var data = (DistributeDataObject) queueItem;
-                Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
+                //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
                 Random rng = new Random();
                 Task.Delay(rng.Next(1, 250));
             }
             else
             {
-                Console.WriteLine("Distributor Skipped");
+                Console.WriteLine("Distributor Skipped, Distributor Queue is empty: " + DistributorQueue.IsEmpty);
                 Task.Delay(50);
             }
         }

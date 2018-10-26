@@ -19,7 +19,7 @@ namespace Smoulder
             distributor.RegisterDistributorQueue(distributorQueue);
 
             //Creates a Smoulder encapsulating the units
-            var smoulder = new Smoulder(loader, processor, distributor);
+            var smoulder = new Smoulder(loader, processor, distributor, processorQueue, distributorQueue);
             //Returns the Smoulder
             return smoulder;
         }

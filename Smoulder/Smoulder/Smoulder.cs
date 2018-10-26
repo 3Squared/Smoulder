@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
@@ -8,12 +9,21 @@ namespace Smoulder
         private ILoader _loader;
         private IProcessor _processor;
         private IDistributor _distributor;
+        private ConcurrentQueue<IProcessDataObject> _processorQueue;
+        private ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 
-        public Smoulder(ILoader loader, IProcessor processor, IDistributor distributor)
+        public bool IsRunning;
+        public int ProcessorQueueItems => _processorQueue.Count;
+        public int DistributorQueueItems => _distributorQueue.Count;
+
+        public Smoulder(ILoader loader, IProcessor processor, IDistributor distributor,
+            ConcurrentQueue<IProcessDataObject> processorQueue, ConcurrentQueue<IDistributeDataObject> distributorQueue)
         {
             _loader = loader;
             _processor = processor;
             _distributor = distributor;
+            _processorQueue = processorQueue;
+            _distributorQueue = distributorQueue;
         }
 
         public async void Start()
@@ -21,6 +31,8 @@ namespace Smoulder
             var loaderStartTask = Task.Factory.StartNew(() => _loader.Start());
             var processorStartTask = Task.Factory.StartNew(() => _processor.Start());
             var distributorStartTask = Task.Factory.StartNew(() => _distributor.Start());
+
+            IsRunning = true;
 
             await loaderStartTask;
             await processorStartTask;
@@ -36,6 +48,9 @@ namespace Smoulder
             await loaderStopTask;
             await processorStopTask;
             await distributorStopTask;
+
+            IsRunning = false;
         }
+
     }
 }

@@ -11,7 +11,7 @@ namespace Smoulder.Application.ConcreteClasses
         private int _count;
         public override void Action()
         {
-            Console.WriteLine("Loading");
+            //Console.WriteLine("Loading");
             var data = new ProcessDataObject {DataValue = _count};
             _count++;
             ProcessorQueue.Enqueue(data);
