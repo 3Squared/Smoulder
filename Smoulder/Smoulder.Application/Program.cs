@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Smoulder.Application.ConcreteClasses;
+using Smoulder.ExampleApplication.ConcreteClasses;
 
-namespace Smoulder.Application
+namespace Smoulder.ExampleApplication
 {
     class Program
     {

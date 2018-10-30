@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smoulder", "Smoulder\Smould
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smoulder.Tests", "Smoulder.Tests\Smoulder.Tests.csproj", "{4885EBBC-FF60-45A6-B104-AB580D5152D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smoulder.Application", "Smoulder.Application\Smoulder.Application.csproj", "{71E15927-58C0-462B-931F-9A2752FE0756}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smoulder.ExampleApplication", "Smoulder.Application\Smoulder.ExampleApplication.csproj", "{71E15927-58C0-462B-931F-9A2752FE0756}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

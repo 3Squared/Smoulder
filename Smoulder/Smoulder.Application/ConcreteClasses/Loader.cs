@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smoulder.Application.ConcreteClasses
+namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Loader : LoaderBase
     {

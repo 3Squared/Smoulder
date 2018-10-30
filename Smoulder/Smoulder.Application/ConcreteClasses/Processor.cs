@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
-namespace Smoulder.Application.ConcreteClasses
+namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Processor : ProcessorBase
     {

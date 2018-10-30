@@ -1,6 +1,6 @@
 ﻿using Smoulder.Interfaces;
 
-namespace Smoulder.Application.ConcreteClasses
+namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     class ProcessDataObject : IProcessDataObject
     {
