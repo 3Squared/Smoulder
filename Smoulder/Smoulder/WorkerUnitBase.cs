@@ -16,7 +16,7 @@ namespace Smoulder
             }
         }
 
-        public virtual async Task Action(CancellationToken cancellationToken)
+        public virtual async void Action(CancellationToken cancellationToken)
         {
             await Task.Delay(100);
         }

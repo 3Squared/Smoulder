@@ -7,7 +7,7 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Distributor : DistributorBase
     {
-        public override Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
             {
@@ -21,7 +21,6 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
                 Console.WriteLine("Distributor Skipped, Distributor Queue is empty: " + DistributorQueue.IsEmpty);
                 Task.Delay(50);
             }
-            return null;
         }
 
         public override async Task Finalise()

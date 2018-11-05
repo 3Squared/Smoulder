@@ -7,7 +7,7 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Processor : ProcessorBase
     {
-        public override Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
             {
@@ -29,7 +29,6 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
                 Console.WriteLine("Processor Skipped, Processor Queue is empty: " + ProcessorQueue.IsEmpty);
                 Task.Delay(50);
             }
-            return null;
         }
 
         public override async Task Finalise()
