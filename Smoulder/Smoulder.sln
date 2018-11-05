@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smoulder", "Smoulder\Smoulder.csproj", "{C5099BF9-CF00-40CA-BE43-9D874392B6AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smoulder.Tests", "Smoulder.Tests\Smoulder.Tests.csproj", "{4885EBBC-FF60-45A6-B104-AB580D5152D4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smoulder.ExampleApplication", "Smoulder.Application\Smoulder.ExampleApplication.csproj", "{71E15927-58C0-462B-931F-9A2752FE0756}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureAnalysis", "TemperatureAnalysis\TemperatureAnalysis.csproj", "{97FB3E1D-0F72-46D5-929F-8073CF842C2B}"
@@ -21,10 +19,6 @@ Global
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4885EBBC-FF60-45A6-B104-AB580D5152D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4885EBBC-FF60-45A6-B104-AB580D5152D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4885EBBC-FF60-45A6-B104-AB580D5152D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4885EBBC-FF60-45A6-B104-AB580D5152D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{71E15927-58C0-462B-931F-9A2752FE0756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71E15927-58C0-462B-931F-9A2752FE0756}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E15927-58C0-462B-931F-9A2752FE0756}.Release|Any CPU.ActiveCfg = Release|Any CPU
