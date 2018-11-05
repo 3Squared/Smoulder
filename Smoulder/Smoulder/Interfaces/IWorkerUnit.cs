@@ -9,7 +9,7 @@ namespace Smoulder.Interfaces
     public interface IWorkerUnit
     {
         Task Start(CancellationToken cancellationToken);
-        void Action(CancellationToken cancellationToken);
+        Task Action(CancellationToken cancellationToken);
         Task Finalise();
     }
 }

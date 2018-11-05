@@ -7,7 +7,7 @@ namespace Smoulder.Tests.TestConcreteClasses
 {
     public class DistributorTest : DistributorBase
     {
-        public override void Action(CancellationToken cancellationToken)
+        public override Task Action(CancellationToken cancellationToken)
         {
             if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
             {
@@ -18,6 +18,7 @@ namespace Smoulder.Tests.TestConcreteClasses
             {
                 Task.Delay(50);
             }
+            return null;
         }
     }
 }

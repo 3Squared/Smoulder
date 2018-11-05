@@ -6,7 +6,7 @@ namespace Smoulder.Tests.TestConcreteClasses
 {
     public class ProcessorTest : ProcessorBase
     {
-        public override void Action(CancellationToken cancellationToken)
+        public override Task Action(CancellationToken cancellationToken)
         {
 
             if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
