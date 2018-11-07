@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Smoulder;
 
 namespace TemperatureAnalysis.Smoulder
@@ -12,6 +13,7 @@ namespace TemperatureAnalysis.Smoulder
         {
             if (_finished)
             {
+                await Task.Delay(1000);
                 return;
             }
             using (var reader = new StreamReader(@"TemperatureData.csv"))
@@ -34,10 +36,10 @@ namespace TemperatureAnalysis.Smoulder
 
                     };
 
-                    if (potentialTempData.Time.DayOfWeek > startOfWeek &&
-                        potentialTempData.Time.DayOfWeek < endOfWeek &&
-                        (potentialTempData.Time.TimeOfDay > startOfDay &&
-                         potentialTempData.Time.TimeOfDay < endOfDay))
+                    if (potentialTempData.Time.DayOfWeek >= startOfWeek &&
+                        potentialTempData.Time.DayOfWeek <= endOfWeek &&
+                        (potentialTempData.Time.TimeOfDay >= startOfDay &&
+                         potentialTempData.Time.TimeOfDay <= endOfDay))
                     {
                         ProcessorQueue.Enqueue(potentialTempData);
                     }

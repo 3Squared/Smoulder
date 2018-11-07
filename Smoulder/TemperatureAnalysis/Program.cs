@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Smoulder;
 using TemperatureAnalysis.Smoulder;
 
@@ -11,6 +12,10 @@ namespace TemperatureAnalysis
             var smoulderFactory = new SmoulderFactory();
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
             smoulder.Start().Wait();
+
+            Thread.Sleep(50000);
+
+            smoulder.Stop().Wait();
 
             Console.ReadLine();
         }
