@@ -1,6 +1,6 @@
 ﻿namespace Smoulder.Interfaces
 {
-    public interface IProcessDataObject
+    public interface IDataObject
     {
     }
 }
