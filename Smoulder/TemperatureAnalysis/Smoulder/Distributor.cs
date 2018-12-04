@@ -11,8 +11,11 @@ namespace TemperatureAnalysis.Smoulder
     public class Distributor : DistributorBase
     {
         private int _totalCount;
+        private int _peakCount;
         private decimal _totalSum;
+        private decimal _peakSum;
         private decimal _average;
+        private decimal _averagePeak;
         private Peak _maxPeak = new Peak();
         private DateTime? _startDate = null;
         private DateTime _endDate = new DateTime();
@@ -39,8 +42,11 @@ namespace TemperatureAnalysis.Smoulder
 
 
                     _totalCount = _totalCount + data.Count;
+                    _peakCount++;
                     _totalSum = _totalSum + data.TemperatureSum;
+                    _peakSum = _peakSum + data.Peak.Temperature;
                     _average = _totalSum / _totalCount;
+                    _averagePeak = _peakSum / _peakCount;
                     peaks.Add(data.Peak);
 
                     if (data.Peak.Temperature > _maxPeak.Temperature)
@@ -67,9 +73,10 @@ namespace TemperatureAnalysis.Smoulder
         {
             Console.WriteLine("Final Results:");
             Console.WriteLine("Average Temperature during office hours {0:0.0}", _average);
+            Console.WriteLine("Average Peak Temperature during office hours {0:0.0}", _averagePeak);
             Console.WriteLine("Max Temperature {0:0.0}", _maxPeak.Temperature);
             Console.WriteLine("Hottest Day {0}",_maxPeak.Time.ToShortDateString());
-            Console.WriteLine("Number of Days {0}",_totalCount);
+            Console.WriteLine("Number of Data points {0}",_totalCount);
             Console.WriteLine("Start Date {0}", _startDate?.ToShortDateString());
             Console.WriteLine("End Date {0}", _endDate.ToShortDateString());
         }
