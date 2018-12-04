@@ -1,43 +1,25 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using Smoulder.Interfaces;
 
 namespace Smoulder
 {
     public class SmoulderFactory : ISmoulderFactory
     {
-        private List<ConcurrentQueue<IDataObject>> _queues;
-
-        public Smoulder Build(List<IWorkerUnit> workerUnits)
+        public Smoulder Build(ILoader loader, IProcessor processor, IDistributor distributor)
         {
             //Create Queues
-            var numberOfQueues = workerUnits.Count - 1;
+            ConcurrentQueue<IProcessDataObject> processorQueue = new ConcurrentQueue<IProcessDataObject>();
+            ConcurrentQueue<IDistributeDataObject> distributorQueue = new ConcurrentQueue<IDistributeDataObject>();
 
-            _queues = new List<ConcurrentQueue<IDataObject>>();
+            //Hooks units up to Queues
+            loader.RegisterProcessorQueue(processorQueue);
+            processor.RegisterProcessorQueue(processorQueue);
 
-            for (var i = 0; i < numberOfQueues; i++)
-            {
-                _queues.Add(new ConcurrentQueue<IDataObject>());
-            }
-
-            foreach (var workerUnit in workerUnits)
-            {
-                if (workerUnits.IndexOf(workerUnit) == 0)
-                {
-                    //Only connect downstream
-                }
-
-                //Connect both
-
-                if (workerUnits.Last() == workerUnit)
-                {
-                    //Only connect upstream
-                }
-            }
+            processor.RegisterDistributorQueue(distributorQueue);
+            distributor.RegisterDistributorQueue(distributorQueue);
 
             //Creates a Smoulder encapsulating the units
-            var smoulder = new Smoulder();
+            var smoulder = new Smoulder(loader, processor, distributor, processorQueue, distributorQueue);
             //Returns the Smoulder
             return smoulder;
         }

@@ -8,8 +8,11 @@ namespace Smoulder
 {
     public class Smoulder : ISmoulder
     {
-        private readonly ConcurrentQueue<IDataObject> _processorQueue;
-        private readonly ConcurrentQueue<IDataObject> _distributorQueue;
+        private readonly ILoader _loader;
+        private readonly IProcessor _processor;
+        private readonly IDistributor _distributor;
+        private readonly ConcurrentQueue<IProcessDataObject> _processorQueue;
+        private readonly ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 
         private readonly CancellationTokenSource loaderCancellationTokenSource;
         private readonly CancellationTokenSource processorCancellationTokenSource;
@@ -18,8 +21,15 @@ namespace Smoulder
         public int ProcessorQueueItems => _processorQueue.Count;
         public int DistributorQueueItems => _distributorQueue.Count;
 
-        public Smoulder()
+        public Smoulder(ILoader loader, IProcessor processor, IDistributor distributor,
+            ConcurrentQueue<IProcessDataObject> processorQueue, ConcurrentQueue<IDistributeDataObject> distributorQueue)
         {
+            _loader = loader;
+            _processor = processor;
+            _distributor = distributor;
+            _processorQueue = processorQueue;
+            _distributorQueue = distributorQueue;
+
             loaderCancellationTokenSource = new CancellationTokenSource();
             processorCancellationTokenSource = new CancellationTokenSource();
             distributorCancellationTokenSource = new CancellationTokenSource();
