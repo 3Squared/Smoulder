@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Smoulder;
 
@@ -11,10 +12,12 @@ namespace StockMarketAnalysis.Smoulder
             if (DistributorQueue.TryDequeue(out var incomingData))
             {
                 //Distribute the buy/sell order to user
+                var decision = (TradeDecision) incomingData;
+                Console.WriteLine($"{decision.Ticker}: {decision.TradeAction}");
             }
             else
             {
-                await Task.Delay(500);
+                Thread.Sleep(500);
             }
         }
 

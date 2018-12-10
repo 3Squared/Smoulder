@@ -14,9 +14,9 @@ namespace Smoulder
         private readonly ConcurrentQueue<IProcessDataObject> _processorQueue;
         private readonly ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 
-        private readonly CancellationTokenSource loaderCancellationTokenSource;
-        private readonly CancellationTokenSource processorCancellationTokenSource;
-        private readonly CancellationTokenSource distributorCancellationTokenSource;
+        public readonly CancellationTokenSource loaderCancellationTokenSource;
+        public readonly CancellationTokenSource processorCancellationTokenSource;
+        public readonly CancellationTokenSource distributorCancellationTokenSource;
 
         public int ProcessorQueueItems => _processorQueue.Count;
         public int DistributorQueueItems => _distributorQueue.Count;

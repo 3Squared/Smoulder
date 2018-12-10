@@ -10,14 +10,20 @@ namespace Smoulder
 
         public virtual async Task Start(CancellationToken cancellationToken)
         {
+            Startup();
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Run(() => Action(cancellationToken));
+                Action(cancellationToken);
             }
         }
 
         public abstract void Action(CancellationToken cancellationToken);
 
-        public abstract Task Finalise();
+        public virtual async Task Finalise()
+        {
+        }
+        public virtual async Task Startup()
+        {
+        }
     }
 }

@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Avapi, Version=1.4.8.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avapi.1.4.8.3\lib\netstandard2.0\Avapi.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,22 +49,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\TradeAction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Smoulder\Distributor.cs" />
-    <Compile Include="Smoulder\LoadedTempData.cs" />
+    <Compile Include="Smoulder\StockData.cs" />
     <Compile Include="Smoulder\Loader.cs" />
-    <Compile Include="Smoulder\OutputDataSegment.cs" />
+    <Compile Include="Smoulder\TradeAction.cs" />
     <Compile Include="Smoulder\Processor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Smoulder\Smoulder.csproj">
       <Project>{c5099bf9-cf00-40ca-be43-9d874392b6aa}</Project>
       <Name>Smoulder</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Archive\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
