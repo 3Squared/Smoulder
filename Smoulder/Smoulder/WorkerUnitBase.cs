@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public class WorkerUnitBase : IWorkerUnit
+    public abstract class WorkerUnitBase : IWorkerUnit
     {
 
         public virtual async Task Start(CancellationToken cancellationToken)
@@ -16,13 +16,8 @@ namespace Smoulder
             }
         }
 
-        public virtual async void Action(CancellationToken cancellationToken)
-        {
-            await Task.Delay(100);
-        }
+        public abstract void Action(CancellationToken cancellationToken);
 
-        public virtual async Task Finalise()
-        {
-        }
+        public abstract Task Finalise();
     }
 }
