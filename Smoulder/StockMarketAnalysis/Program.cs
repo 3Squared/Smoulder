@@ -13,9 +13,9 @@ namespace StockMarketAnalysis
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
             smoulder.Start().Wait();
 
-            Console.WriteLine("Press enter to stop");
-            Console.ReadLine();
-            smoulder.Stop().Wait();
+            //Console.WriteLine("Press enter to stop");
+            //Console.ReadLine();
+            //smoulder.Stop().Wait();
         }
     }
 }
