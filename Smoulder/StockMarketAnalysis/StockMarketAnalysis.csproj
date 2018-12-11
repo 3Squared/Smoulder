@@ -55,6 +55,7 @@
     <Compile Include="Smoulder\Distributor.cs" />
     <Compile Include="Smoulder\StockData.cs" />
     <Compile Include="Smoulder\Loader.cs" />
+    <Compile Include="Smoulder\TickerDetails.cs" />
     <Compile Include="Smoulder\TradeAction.cs" />
     <Compile Include="Smoulder\Processor.cs" />
   </ItemGroup>
@@ -68,8 +69,6 @@
       <Name>Smoulder</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Archive\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

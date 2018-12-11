@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -11,21 +12,42 @@ namespace StockMarketAnalysis.Smoulder
 {
     public class Processor : ProcessorBase
     {
-        private decimal _previousStochK;
-        private decimal _previousStochD;
+        private Dictionary<string, TickerDetails> _tickers;
+        private TickerDetails _workingTicker;
 
         public override async void Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out var incomingData))
             {
-                //Find the thing I want to find at a data point
-                var stockData = (StockData)incomingData;
+                var stockData = (StockData) incomingData;
 
-                var slowK = decimal.Parse(stockData.Stoch.TechnicalIndicator.First().SlowK);
-                var slowD = decimal.Parse(stockData.Stoch.TechnicalIndicator.First().SlowD);
-                var stochTradeAction = AnalyseStoch(_previousStochK, _previousStochD, slowK, slowD);
+                var slowK = double.Parse(stockData.Stoch.TechnicalIndicator.First().SlowK);
+                var slowD = double.Parse(stockData.Stoch.TechnicalIndicator.First().SlowD);
 
-                Console.WriteLine($"K {slowK} : D {slowD} : {stochTradeAction}");
+                if (!_tickers.ContainsKey(stockData.Ticker))
+                {
+                    _tickers.Add(stockData.Ticker, new TickerDetails
+                    {
+                        Ticker = stockData.Ticker,
+                        PreviousD = slowD,
+                        PreviousK = slowK
+                    });
+
+                Console.WriteLine($"Adding {stockData.Ticker}");
+                    return;
+                }
+
+                _workingTicker = _tickers[stockData.Ticker];
+
+
+                var stochTradeAction = AnalyseStoch(
+                    _workingTicker.PreviousK,
+                    _workingTicker.PreviousD,
+                    _workingTicker.CurrentK,
+                    _workingTicker.CurrentD);
+
+                Console.WriteLine($"{stockData.Ticker}: K {slowK} , D {slowD} : {stochTradeAction}");
+                Console.WriteLine();
 
                 //Say buy/sell for that stock
 
@@ -41,8 +63,10 @@ namespace StockMarketAnalysis.Smoulder
 
                 WriteToFile(slowK, slowD, stochTradeAction, stockData.Ticker);
 
-                _previousStochD = slowD;
-                _previousStochK = slowK;
+                _workingTicker.PreviousD = _workingTicker.CurrentD;
+                _workingTicker.PreviousK = _workingTicker.CurrentK;
+
+                _tickers[_workingTicker.Ticker] = _workingTicker;
             }
             else
             {
@@ -50,7 +74,7 @@ namespace StockMarketAnalysis.Smoulder
             }
         }
 
-        private void WriteToFile(decimal slowK, decimal slowD, TradeAction.TradeActionEnum stochTradeAction, string ticker)
+        private void WriteToFile(double slowK, double slowD, TradeAction.TradeActionEnum stochTradeAction, string ticker)
         {
             try
             {
@@ -65,21 +89,22 @@ namespace StockMarketAnalysis.Smoulder
             }
         }
 
-        public override async Task Finalise()
+        public override async Task Startup()
         {
+            _tickers = new Dictionary<string, TickerDetails>();
         }
 
-        private TradeAction.TradeActionEnum AnalyseStoch(decimal prevK, decimal prevD, decimal currentK, decimal currentD)
+        private TradeAction.TradeActionEnum AnalyseStoch(double? prevK, double? prevD, double? currentK, double? currentD)
         {
             if (currentD > 80 && prevK > prevD && currentD > currentK)
             {
-                return Enums.TradeAction.TradeActionEnum.buy;
+                return TradeAction.TradeActionEnum.buy;
             }
             if (currentD < 20 && prevK < prevD && currentD < currentK)
             {
-                return Enums.TradeAction.TradeActionEnum.sell;
+                return TradeAction.TradeActionEnum.sell;
             }
-            return Enums.TradeAction.TradeActionEnum.none;
+            return TradeAction.TradeActionEnum.none;
         }
     }
 }
