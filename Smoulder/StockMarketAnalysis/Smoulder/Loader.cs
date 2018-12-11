@@ -18,7 +18,7 @@ namespace StockMarketAnalysis.Smoulder
 
         private AvapiConnection _avapiConnection;
 
-        public override async void Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             var ticker = _tickers.First();
 
@@ -29,7 +29,6 @@ namespace StockMarketAnalysis.Smoulder
 
             if (stochData != null)
             {
-
                 if (stochData.Error)
                 {
                     Console.WriteLine($"Error getting {ticker.Ticker}: {stochData.ErrorMessage}");
@@ -37,18 +36,7 @@ namespace StockMarketAnalysis.Smoulder
                     return;
                 }
 
-
-                ticker.CurrentD = double.Parse(stochData.TechnicalIndicator.First().SlowD);
-                ticker.CurrentK = double.Parse(stochData.TechnicalIndicator.First().SlowK);
-
-                if (ticker.PreviousD != null && ticker.PreviousK != null)
-                {
-                    ticker.DeltaD = (double) (ticker.CurrentD - ticker.PreviousD);
-                    ticker.DeltaK = (double) (ticker.CurrentK - ticker.PreviousK);
-                    ticker.OrderValue = Math.Sqrt(ticker.DeltaD * ticker.DeltaD + ticker.DeltaK * ticker.DeltaK);
-                }
-
-                Thread.Sleep(_rateLimit);
+                ticker = UpdateTicker(ticker, stochData);
             }
             else
             {
@@ -56,6 +44,37 @@ namespace StockMarketAnalysis.Smoulder
                 ticker.OrderValue = 0;
             }
 
+            RepositionTicker(ticker);
+            ReportTickerOrder();
+        }
+
+        private void ReportTickerOrder()
+        {
+            foreach (var sorted in _tickers)
+            {
+                Console.Write($"({sorted.Ticker}:{Math.Round(sorted.OrderValue, 2)}) ");
+            }
+            Console.WriteLine();
+        }
+
+        private TickerDetails UpdateTicker(TickerDetails ticker, IAvapiResponse_STOCH_Content stochData)
+        {
+            ticker.CurrentD = double.Parse(stochData.TechnicalIndicator.First().SlowD);
+            ticker.CurrentK = double.Parse(stochData.TechnicalIndicator.First().SlowK);
+
+            if (ticker.PreviousD != null && ticker.PreviousK != null)
+            {
+                ticker.DeltaD = (double)(ticker.CurrentD - ticker.PreviousD);
+                ticker.DeltaK = (double)(ticker.CurrentK - ticker.PreviousK);
+                ticker.OrderValue = Math.Sqrt(ticker.DeltaD * ticker.DeltaD + ticker.DeltaK * ticker.DeltaK);
+            }
+
+            Thread.Sleep(_rateLimit);
+            return ticker;
+        }
+
+        private void RepositionTicker(TickerDetails ticker)
+        {
             if (Math.Abs(ticker.OrderValue) < 0.01)
             {
                 _tickers.Remove(ticker);
@@ -71,17 +90,38 @@ namespace StockMarketAnalysis.Smoulder
 
                 _tickers.Insert(insertPosition, ticker);
             }
-
-            foreach (var sorted in _tickers)
-            {
-                Console.Write($"({sorted.Ticker}:{Math.Round(sorted.OrderValue,2)}) ");
-            }
-            Console.WriteLine();
         }
 
-        public override async Task Startup()
+        public IAvapiResponse_STOCH_Content GetStochForTicker(string ticker)
+        {
+            try
+            {
+                var stochResponse = _avapiConnection.GetQueryObject_STOCH().Query(ticker, Const_STOCH.STOCH_interval.n_1min, 10, 10, 10,
+                    Const_STOCH.STOCH_slowkmatype.n_0, Const_STOCH.STOCH_slowdmatype.n_0);
+                //Shove it onto queue
+                var queueData = new StockData
+                {
+                    Ema = null,
+                    Stoch = stochResponse.Data,
+                    Ticker = ticker
+                };
+
+                ProcessorQueue.Enqueue(queueData);
+
+                return stochResponse.Data;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
+        }
+
+        public override Task Startup()
         {
             _rateLimit = 57000;
+            _avapiConnection = AvapiConnection.Instance;
+            _avapiConnection.Connect(_apiKey);
             _sp100 = new List<string>
             {
                 "AAPL",
@@ -185,43 +225,12 @@ namespace StockMarketAnalysis.Smoulder
                 "WFC",
                 "WMT",
                 "XOM"
-
             };
-
-            _avapiConnection = AvapiConnection.Instance;
-            _avapiConnection.Connect(_apiKey);
             _tickers = new List<TickerDetails>();
             foreach (var spcomany in _sp100)
             {
-                _tickers.Add(new TickerDetails{Ticker = spcomany});
+                _tickers.Add(new TickerDetails { Ticker = spcomany });
             }
         }
-
-        public IAvapiResponse_STOCH_Content GetStochForTicker(string ticker)
-        {
-
-            try
-            {
-                var stochResponse = _avapiConnection.GetQueryObject_STOCH().Query(ticker, Const_STOCH.STOCH_interval.n_1min, 10, 10, 10,
-                    Const_STOCH.STOCH_slowkmatype.n_0, Const_STOCH.STOCH_slowdmatype.n_0);
-                //Shove it onto queue
-                var queueData = new StockData
-                {
-                    Ema = null,
-                    Stoch = stochResponse.Data,
-                    Ticker = ticker
-                };
-
-                ProcessorQueue.Enqueue(queueData);
-
-                return stochResponse.Data;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return null;
-        }
-
     }
 }
