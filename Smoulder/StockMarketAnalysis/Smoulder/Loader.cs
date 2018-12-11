@@ -117,7 +117,7 @@ namespace StockMarketAnalysis.Smoulder
             return null;
         }
 
-        public override Task Startup()
+        public override async Task Startup()
         {
             _rateLimit = 57000;
             _avapiConnection = AvapiConnection.Instance;
