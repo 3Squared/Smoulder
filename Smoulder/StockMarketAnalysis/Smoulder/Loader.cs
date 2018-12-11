@@ -11,8 +11,9 @@ namespace StockMarketAnalysis.Smoulder
 {
     public class Loader : LoaderBase
     {
-        private List<string> sp100;
+        private List<string> _sp100;
         private List<TickerDetails> _tickers;
+        private int _rateLimit;
         private readonly string _apiKey = "OU9SMS12HKE8MPLV";
 
         private AvapiConnection _avapiConnection;
@@ -32,7 +33,7 @@ namespace StockMarketAnalysis.Smoulder
                 if (stochData.Error)
                 {
                     Console.WriteLine($"Error getting {ticker.Ticker}: {stochData.ErrorMessage}");
-                    Thread.Sleep(12000);
+                    Thread.Sleep(_rateLimit);
                     return;
                 }
 
@@ -47,7 +48,7 @@ namespace StockMarketAnalysis.Smoulder
                     ticker.OrderValue = Math.Sqrt(ticker.DeltaD * ticker.DeltaD + ticker.DeltaK * ticker.DeltaK);
                 }
 
-                Thread.Sleep(12000);
+                Thread.Sleep(_rateLimit);
             }
             else
             {
@@ -80,7 +81,8 @@ namespace StockMarketAnalysis.Smoulder
 
         public override async Task Startup()
         {
-            sp100 = new List<string>
+            _rateLimit = 57000;
+            _sp100 = new List<string>
             {
                 "AAPL",
                 "ABBV",
@@ -189,7 +191,7 @@ namespace StockMarketAnalysis.Smoulder
             _avapiConnection = AvapiConnection.Instance;
             _avapiConnection.Connect(_apiKey);
             _tickers = new List<TickerDetails>();
-            foreach (var spcomany in sp100)
+            foreach (var spcomany in _sp100)
             {
                 _tickers.Add(new TickerDetails{Ticker = spcomany});
             }
