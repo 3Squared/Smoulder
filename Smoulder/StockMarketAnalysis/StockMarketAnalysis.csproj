@@ -53,6 +53,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Smoulder\Distributor.cs" />
+    <Compile Include="Smoulder\StartupParameters.cs" />
     <Compile Include="Smoulder\StockData.cs" />
     <Compile Include="Smoulder\Loader.cs" />
     <Compile Include="Smoulder\TickerDetails.cs" />

@@ -45,22 +45,27 @@ namespace Smoulder
             }
         }
 
+        public async Task Start()
+        {
+            lock (this)
+            {
+                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token));
+                Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token));
+                Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token));
+            }
+        }
+
         public async Task Stop()
         {
-            Console.WriteLine("Shutdown loader Starting");
-            loaderCancellationTokenSource.Cancel();
-            var loaderStopTask = Task.Factory.StartNew(() => _loader.Finalise());
-            await loaderStopTask;
-
-            Console.WriteLine("Shutdown processor Starting");
-            ProcessorCancellationTokenSource.Cancel();
-            var processorStopTask = Task.Factory.StartNew(() => _processor.Finalise());
-            await processorStopTask;
-
-            Console.WriteLine("Shutdown distributor Starting");
-            DistributorCancellationTokenSource.Cancel();
-            var distributorStopTask = Task.Factory.StartNew(() => _distributor.Finalise());
-            await distributorStopTask;
+            lock (this)
+            {
+                loaderCancellationTokenSource.Cancel();
+                Task.Factory.StartNew(() => _loader.Finalise());
+                ProcessorCancellationTokenSource.Cancel();
+                Task.Factory.StartNew(() => _processor.Finalise());
+                DistributorCancellationTokenSource.Cancel();
+                Task.Factory.StartNew(() => _distributor.Finalise());
+            }
 
             Console.WriteLine("Shutdown Complete");
         }

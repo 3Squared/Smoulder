@@ -6,6 +6,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using Smoulder;
+using Smoulder.Interfaces;
 using StockMarketAnalysis.Enums;
 
 namespace StockMarketAnalysis.Smoulder
@@ -89,7 +90,7 @@ namespace StockMarketAnalysis.Smoulder
             }
         }
 
-        public override async Task Startup(params object[] args)
+        public override async Task Startup(IStartupParameters startupParameters)
         {
             _tickers = new Dictionary<string, TickerDetails>();
         }
