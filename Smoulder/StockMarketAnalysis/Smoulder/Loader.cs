@@ -108,7 +108,7 @@ namespace StockMarketAnalysis.Smoulder
             {
                 var stochResponse = _avapiConnection.GetQueryObject_STOCH().Query(ticker, Const_STOCH.STOCH_interval.n_1min, 10, 10, 10,
                     Const_STOCH.STOCH_slowkmatype.n_0, Const_STOCH.STOCH_slowdmatype.n_0);
-                //Shove it onto queue
+
                 var queueData = new StockData
                 {
                     Ema = null,

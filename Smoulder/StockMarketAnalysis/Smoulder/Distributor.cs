@@ -11,7 +11,6 @@ namespace StockMarketAnalysis.Smoulder
         {
             if (DistributorQueue.TryDequeue(out var incomingData))
             {
-                //Distribute the buy/sell order to user
                 var decision = (TradeDecision) incomingData;
                 Console.WriteLine($"{decision.Ticker}: {decision.TradeAction}");
             }
