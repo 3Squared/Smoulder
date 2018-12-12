@@ -4,7 +4,7 @@ namespace Smoulder.Interfaces
 {
     public interface ISmoulder
     {
-        Task Start();
+        Task Start(params object[] args);
         Task Stop();
     }
 }

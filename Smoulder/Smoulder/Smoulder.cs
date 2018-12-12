@@ -15,8 +15,8 @@ namespace Smoulder
         private readonly ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 
         public readonly CancellationTokenSource loaderCancellationTokenSource;
-        public readonly CancellationTokenSource processorCancellationTokenSource;
-        public readonly CancellationTokenSource distributorCancellationTokenSource;
+        public readonly CancellationTokenSource ProcessorCancellationTokenSource;
+        public readonly CancellationTokenSource DistributorCancellationTokenSource;
 
         public int ProcessorQueueItems => _processorQueue.Count;
         public int DistributorQueueItems => _distributorQueue.Count;
@@ -31,17 +31,17 @@ namespace Smoulder
             _distributorQueue = distributorQueue;
 
             loaderCancellationTokenSource = new CancellationTokenSource();
-            processorCancellationTokenSource = new CancellationTokenSource();
-            distributorCancellationTokenSource = new CancellationTokenSource();
+            ProcessorCancellationTokenSource = new CancellationTokenSource();
+            DistributorCancellationTokenSource = new CancellationTokenSource();
         }
 
-        public async Task Start()
+        public async Task Start(params object[] args)
         {
             lock (this)
             {
-                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token));
-                Task.Factory.StartNew(() => _processor.Start(processorCancellationTokenSource.Token));
-                Task.Factory.StartNew(() => _distributor.Start(distributorCancellationTokenSource.Token));
+                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token, args));
+                Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token, args));
+                Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token, args));
             }
         }
 
@@ -53,12 +53,12 @@ namespace Smoulder
             await loaderStopTask;
 
             Console.WriteLine("Shutdown processor Starting");
-            processorCancellationTokenSource.Cancel();
+            ProcessorCancellationTokenSource.Cancel();
             var processorStopTask = Task.Factory.StartNew(() => _processor.Finalise());
             await processorStopTask;
 
             Console.WriteLine("Shutdown distributor Starting");
-            distributorCancellationTokenSource.Cancel();
+            DistributorCancellationTokenSource.Cancel();
             var distributorStopTask = Task.Factory.StartNew(() => _distributor.Finalise());
             await distributorStopTask;
 

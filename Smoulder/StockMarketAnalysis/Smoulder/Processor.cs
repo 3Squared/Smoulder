@@ -33,7 +33,7 @@ namespace StockMarketAnalysis.Smoulder
                         PreviousK = slowK
                     });
 
-                Console.WriteLine($"Adding {stockData.Ticker}");
+                Console.WriteLine($"Adding {stockData.Ticker}: K {slowK} , D {slowD} ");
                     return;
                 }
 
@@ -89,7 +89,7 @@ namespace StockMarketAnalysis.Smoulder
             }
         }
 
-        public override async Task Startup()
+        public override async Task Startup(params object[] args)
         {
             _tickers = new Dictionary<string, TickerDetails>();
         }

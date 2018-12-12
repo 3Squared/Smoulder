@@ -79,16 +79,27 @@ namespace StockMarketAnalysis.Smoulder
             {
                 _tickers.Remove(ticker);
                 _tickers.Add(ticker);
+                Console.WriteLine($"{ticker.Ticker}: No Change sending to {_tickers.IndexOf(ticker)}");
             }
             else
             {
                 _tickers.Remove(ticker);
 
-                var halfLength = _tickers.Count / 2.0;
-                var percentageThrough = ticker.OrderValue/100;
-                var insertPosition = (int) Math.Ceiling(halfLength * (1 - percentageThrough));
+                int insertPosition;
+                if (ticker.OrderValue > 5)
+                {
+                    insertPosition = 0;
+                }
+                else
+                {
+                    var halfLength = _tickers.Count / 2.0;
+                    var percentageThrough = ticker.OrderValue / 5;
+                    insertPosition = (int)Math.Ceiling(halfLength * (1 - percentageThrough));
+                }
 
                 _tickers.Insert(insertPosition, ticker);
+
+                Console.WriteLine($"{ticker.Ticker}: Change {ticker.OrderValue}, sending to {_tickers.IndexOf(ticker)}");
             }
         }
 
@@ -117,7 +128,7 @@ namespace StockMarketAnalysis.Smoulder
             return null;
         }
 
-        public override async Task Startup()
+        public override async Task Startup(params object[] args)
         {
             _rateLimit = 57000;
             _avapiConnection = AvapiConnection.Instance;
@@ -151,80 +162,7 @@ namespace StockMarketAnalysis.Smoulder
                 "COP",
                 "COST",
                 "CSCO",
-                "CVS",
-                "CVX",
-                "DHR",
-                "DIS",
-                "DUK",
-                "DWDP",
-                "EMR",
-                "EXC",
-                "F",
-                "FB",
-                "FDX",
-                "FOX",
-                "FOXA",
-                "GD",
-                "GE",
-                "GILD",
-                "GM",
-                "GOOG",
-                "GOOGL",
-                "GS",
-                "HAL",
-                "HD",
-                "HON",
-                "IBM",
-                "INTC",
-                "JNJ",
-                "JPM",
-                "KHC",
-                "KMI",
-                "KO",
-                "LLY",
-                "LMT",
-                "LOW",
-                "MA",
-                "MCD",
-                "MDLZ",
-                "MDT",
-                "MET",
-                "MMM",
-                "MO",
-                "MRK",
-                "MS",
-                "MSFT",
-                "NEE",
-                "NFLX",
-                "NKE",
-                "NVDA",
-                "ORCL",
-                "OXY",
-                "PEP",
-                "PFE",
-                "PG",
-                "PM",
-                "PYPL",
-                "QCOM",
-                "RTN",
-                "SBUX",
-                "SLB",
-                "SO",
-                "SPG",
-                "T",
-                "TGT",
-                "TXN",
-                "UNH",
-                "UNP",
-                "UPS",
-                "USB",
-                "UTX",
-                "V",
-                "VZ",
-                "WBA",
-                "WFC",
-                "WMT",
-                "XOM"
+                "CVS"
             };
             _tickers = new List<TickerDetails>();
             foreach (var spcomany in _sp100)
