@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Smoulder;
 using StockMarketAnalysis.Smoulder;
 
 namespace StockMarketAnalysis
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var smoulderFactory = new SmoulderFactory();
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
 
+            //These parameters could come from anywhere, but I don't have a database/config file to pull them from
             var smoulderParameters = new object[] {57000,
                 "OU9SMS12HKE8MPLV",
                 new List<string>
@@ -47,6 +47,7 @@ namespace StockMarketAnalysis
                     "CVS"
                 }
             };
+
             smoulder.Start(smoulderParameters).Wait();
 
             while (!smoulder.loaderCancellationTokenSource.IsCancellationRequested)
