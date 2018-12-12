@@ -45,7 +45,7 @@ namespace StockMarketAnalysis.Smoulder
             }
 
             RepositionTicker(ticker);
-            ReportTickerOrder();
+            //ReportTickerOrder();
         }
 
         private void ReportTickerOrder()
@@ -124,7 +124,7 @@ namespace StockMarketAnalysis.Smoulder
 
         private void WriteToConsole(string output)
         {
-            Console.WriteLine("Loader - " + output);
+            //Console.WriteLine("Loader - " + output);
         }
 
         public override async Task Startup(IStartupParameters startupParameters)

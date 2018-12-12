@@ -13,7 +13,7 @@ namespace StockMarketAnalysis
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
 
             //These parameters could come from anywhere, but I don't have a database/config file to pull them from
-            var startupParameters = new StartupParameters {RateLimit = 15*1000,
+            var startupParameters = new StartupParameters {RateLimit = 60*1000,
                 ApiKey = "OU9SMS12HKE8MPLV",
                 Companies = new List<string>
                 {

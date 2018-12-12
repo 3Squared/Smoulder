@@ -99,11 +99,11 @@ namespace StockMarketAnalysis.Smoulder
         private TradeAction.TradeActionEnum AnalyseStoch(double? prevK, double? prevD, double? currentK,
             double? currentD)
         {
-            if (currentD > 60 && prevK > prevD && currentD > currentK)
+            if (currentD > 65 && prevK > prevD && currentD > currentK)
             {
                 return TradeAction.TradeActionEnum.buy;
             }
-            if (currentD < 40 && prevK < prevD && currentD < currentK)
+            if (currentD < 35 && prevK < prevD && currentD < currentK)
             {
                 return TradeAction.TradeActionEnum.sell;
             }
