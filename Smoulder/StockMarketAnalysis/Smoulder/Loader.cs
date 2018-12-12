@@ -14,7 +14,6 @@ namespace StockMarketAnalysis.Smoulder
         private List<string> _sp100;
         private List<TickerDetails> _tickers;
         private int _rateLimit;
-        private readonly string _apiKey = "OU9SMS12HKE8MPLV";
 
         private AvapiConnection _avapiConnection;
 
@@ -130,40 +129,10 @@ namespace StockMarketAnalysis.Smoulder
 
         public override async Task Startup(params object[] args)
         {
-            _rateLimit = 57000;
+            _rateLimit = (int) args[0];
             _avapiConnection = AvapiConnection.Instance;
-            _avapiConnection.Connect(_apiKey);
-            _sp100 = new List<string>
-            {
-                "AAPL",
-                "ABBV",
-                "ABT",
-                "ACN",
-                "AGN",
-                "AIG",
-                "ALL",
-                "AMGN",
-                "AMZN",
-                "AXP",
-                "BA",
-                "BAC",
-                "BIIB",
-                "BK",
-                "BKNG",
-                "BLK",
-                "BMY",
-                "C",
-                "CAT",
-                "CELG",
-                "CHTR",
-                "CL",
-                "CMCSA",
-                "COF",
-                "COP",
-                "COST",
-                "CSCO",
-                "CVS"
-            };
+            _avapiConnection.Connect((string) args[1]);
+            _sp100 = (List<string>) args[2];
             _tickers = new List<TickerDetails>();
             foreach (var spcomany in _sp100)
             {
