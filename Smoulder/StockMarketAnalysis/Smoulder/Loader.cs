@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avapi;
 using Avapi.AvapiSTOCH;
 using Smoulder;
+using Smoulder.Interfaces;
 
 namespace StockMarketAnalysis.Smoulder
 {
@@ -127,12 +128,13 @@ namespace StockMarketAnalysis.Smoulder
             return null;
         }
 
-        public override async Task Startup(params object[] args)
+        public override async Task Startup(IStartupParameters startupParameters)
         {
-            _rateLimit = (int) args[0];
+            var parameters = (StartupParameters)startupParameters;
+            _rateLimit = parameters.RateLimit;
             _avapiConnection = AvapiConnection.Instance;
-            _avapiConnection.Connect((string) args[1]);
-            _sp100 = (List<string>) args[2];
+            _avapiConnection.Connect(parameters.ApiKey);
+            _sp100 = parameters.Companies;
             _tickers = new List<TickerDetails>();
             foreach (var spcomany in _sp100)
             {

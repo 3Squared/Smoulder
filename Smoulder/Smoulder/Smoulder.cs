@@ -35,13 +35,13 @@ namespace Smoulder
             DistributorCancellationTokenSource = new CancellationTokenSource();
         }
 
-        public async Task Start(params object[] args)
+        public async Task Start(IStartupParameters startupParameters)
         {
             lock (this)
             {
-                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token, args));
-                Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token, args));
-                Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token, args));
+                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token, startupParameters));
+                Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token, startupParameters));
+                Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token, startupParameters));
             }
         }
 

@@ -13,9 +13,9 @@ namespace StockMarketAnalysis
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
 
             //These parameters could come from anywhere, but I don't have a database/config file to pull them from
-            var smoulderParameters = new object[] {57000,
-                "OU9SMS12HKE8MPLV",
-                new List<string>
+            var startupParameters = new StartupParameters {RateLimit = 57000,
+                ApiKey = "OU9SMS12HKE8MPLV",
+                Companies = new List<string>
                 {
                     "AAPL",
                     "ABBV",
@@ -48,7 +48,7 @@ namespace StockMarketAnalysis
                 }
             };
 
-            smoulder.Start(smoulderParameters).Wait();
+            smoulder.Start(startupParameters).Wait();
 
             while (!smoulder.loaderCancellationTokenSource.IsCancellationRequested)
             {

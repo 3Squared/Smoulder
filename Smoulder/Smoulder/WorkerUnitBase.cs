@@ -8,9 +8,9 @@ namespace Smoulder
     public abstract class WorkerUnitBase : IWorkerUnit
     {
 
-        public virtual async Task Start(CancellationToken cancellationToken, params object[] args)
+        public virtual async Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters)
         {
-            await Startup(args);
+            await Startup(startupParameters);
             while (!cancellationToken.IsCancellationRequested)
             {
                 Action(cancellationToken);
@@ -22,7 +22,7 @@ namespace Smoulder
         public virtual async Task Finalise()
         {
         }
-        public virtual async Task Startup(params object[] args)
+        public virtual async Task Startup(IStartupParameters startupParameters)
         {
         }
     }

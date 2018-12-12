@@ -8,7 +8,7 @@ namespace Smoulder.Interfaces
 {
     public interface IWorkerUnit
     {
-        Task Start(CancellationToken cancellationToken, params object[] args);
+        Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters);
         void Action(CancellationToken cancellationToken);
         Task Finalise();
     }
