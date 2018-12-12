@@ -50,7 +50,7 @@ namespace StockMarketAnalysis
 
             smoulder.Start(startupParameters).Wait();
 
-            while (!smoulder.loaderCancellationTokenSource.IsCancellationRequested)
+            while (!smoulder.LoaderCancellationTokenSource.IsCancellationRequested)
             {
                 Thread.Sleep(500);
             }

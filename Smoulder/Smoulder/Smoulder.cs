@@ -14,7 +14,7 @@ namespace Smoulder
         private readonly ConcurrentQueue<IProcessDataObject> _processorQueue;
         private readonly ConcurrentQueue<IDistributeDataObject> _distributorQueue;
 
-        public readonly CancellationTokenSource loaderCancellationTokenSource;
+        public readonly CancellationTokenSource LoaderCancellationTokenSource;
         public readonly CancellationTokenSource ProcessorCancellationTokenSource;
         public readonly CancellationTokenSource DistributorCancellationTokenSource;
 
@@ -30,7 +30,7 @@ namespace Smoulder
             _processorQueue = processorQueue;
             _distributorQueue = distributorQueue;
 
-            loaderCancellationTokenSource = new CancellationTokenSource();
+            LoaderCancellationTokenSource = new CancellationTokenSource();
             ProcessorCancellationTokenSource = new CancellationTokenSource();
             DistributorCancellationTokenSource = new CancellationTokenSource();
         }
@@ -39,7 +39,7 @@ namespace Smoulder
         {
             lock (this)
             {
-                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token, startupParameters));
+                Task.Factory.StartNew(() => _loader.Start(LoaderCancellationTokenSource.Token, startupParameters));
                 Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token, startupParameters));
                 Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token, startupParameters));
             }
@@ -49,7 +49,7 @@ namespace Smoulder
         {
             lock (this)
             {
-                Task.Factory.StartNew(() => _loader.Start(loaderCancellationTokenSource.Token));
+                Task.Factory.StartNew(() => _loader.Start(LoaderCancellationTokenSource.Token));
                 Task.Factory.StartNew(() => _processor.Start(ProcessorCancellationTokenSource.Token));
                 Task.Factory.StartNew(() => _distributor.Start(DistributorCancellationTokenSource.Token));
             }
@@ -59,15 +59,13 @@ namespace Smoulder
         {
             lock (this)
             {
-                loaderCancellationTokenSource.Cancel();
+                LoaderCancellationTokenSource.Cancel();
                 Task.Factory.StartNew(() => _loader.Finalise());
                 ProcessorCancellationTokenSource.Cancel();
                 Task.Factory.StartNew(() => _processor.Finalise());
                 DistributorCancellationTokenSource.Cancel();
                 Task.Factory.StartNew(() => _distributor.Finalise());
             }
-
-            Console.WriteLine("Shutdown Complete");
         }
     }
 }
