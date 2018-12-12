@@ -33,12 +33,13 @@ namespace StockMarketAnalysis.Smoulder
                         PreviousK = slowK
                     });
 
-                Console.WriteLine($"Adding {stockData.Ticker}: K {slowK} , D {slowD} ");
+                    WriteToConsole($"Adding {stockData.Ticker}: K {slowK} , D {slowD} ");
                     return;
                 }
 
                 _workingTicker = _tickers[stockData.Ticker];
-
+                _workingTicker.CurrentD = slowD;
+                _workingTicker.CurrentK = slowK;
 
                 var stochTradeAction = AnalyseStoch(
                     _workingTicker.PreviousK,
@@ -46,8 +47,7 @@ namespace StockMarketAnalysis.Smoulder
                     _workingTicker.CurrentK,
                     _workingTicker.CurrentD);
 
-                Console.WriteLine($"{stockData.Ticker}: K {slowK} , D {slowD} : {stochTradeAction}");
-                Console.WriteLine();
+                WriteToConsole($"{stockData.Ticker}: K {slowK} , D {slowD} : {stochTradeAction}");
 
                 //Say buy/sell for that stock
 
@@ -74,13 +74,15 @@ namespace StockMarketAnalysis.Smoulder
             }
         }
 
-        private void WriteToFile(double slowK, double slowD, TradeAction.TradeActionEnum stochTradeAction, string ticker)
+        private void WriteToFile(double slowK, double slowD, TradeAction.TradeActionEnum stochTradeAction,
+            string ticker)
         {
             try
             {
                 using (var writer = new StreamWriter(@"E:\Projects\StockMarketData\MSFT-StochData.csv", append: true))
                 {
-                    writer.WriteLine($"{DateTime.Now},{ticker},{slowD},{slowK},{slowD > 80},{slowD < 20},{stochTradeAction}");
+                    writer.WriteLine(
+                        $"{DateTime.Now},{ticker},{slowD},{slowK},{slowD > 80},{slowD < 20},{stochTradeAction}");
                 }
             }
             catch (Exception e)
@@ -94,17 +96,23 @@ namespace StockMarketAnalysis.Smoulder
             _tickers = new Dictionary<string, TickerDetails>();
         }
 
-        private TradeAction.TradeActionEnum AnalyseStoch(double? prevK, double? prevD, double? currentK, double? currentD)
+        private TradeAction.TradeActionEnum AnalyseStoch(double? prevK, double? prevD, double? currentK,
+            double? currentD)
         {
-            if (currentD > 80 && prevK > prevD && currentD > currentK)
+            if (currentD > 60 && prevK > prevD && currentD > currentK)
             {
                 return TradeAction.TradeActionEnum.buy;
             }
-            if (currentD < 20 && prevK < prevD && currentD < currentK)
+            if (currentD < 40 && prevK < prevD && currentD < currentK)
             {
                 return TradeAction.TradeActionEnum.sell;
             }
             return TradeAction.TradeActionEnum.none;
+        }
+
+        private void WriteToConsole(string output)
+        {
+            Console.WriteLine("Processor - " + output);
         }
     }
 }

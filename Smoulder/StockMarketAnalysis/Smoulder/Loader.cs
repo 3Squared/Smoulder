@@ -31,7 +31,7 @@ namespace StockMarketAnalysis.Smoulder
             {
                 if (stochData.Error)
                 {
-                    Console.WriteLine($"Error getting {ticker.Ticker}: {stochData.ErrorMessage}");
+                    WriteToConsole($"Error getting {ticker.Ticker}: {stochData.ErrorMessage}");
                     Thread.Sleep(_rateLimit);
                     return;
                 }
@@ -40,7 +40,7 @@ namespace StockMarketAnalysis.Smoulder
             }
             else
             {
-                Console.WriteLine($"Error getting {ticker.Ticker}");
+                WriteToConsole($"Error getting {ticker.Ticker}");
                 ticker.OrderValue = 0;
             }
 
@@ -50,6 +50,7 @@ namespace StockMarketAnalysis.Smoulder
 
         private void ReportTickerOrder()
         {
+            Console.Write("Loader - ");
             foreach (var sorted in _tickers)
             {
                 Console.Write($"({sorted.Ticker}:{Math.Round(sorted.OrderValue, 2)}) ");
@@ -64,8 +65,8 @@ namespace StockMarketAnalysis.Smoulder
 
             if (ticker.PreviousD != null && ticker.PreviousK != null)
             {
-                ticker.DeltaD = (double)(ticker.CurrentD - ticker.PreviousD);
-                ticker.DeltaK = (double)(ticker.CurrentK - ticker.PreviousK);
+                ticker.DeltaD = (double) (ticker.CurrentD - ticker.PreviousD);
+                ticker.DeltaK = (double) (ticker.CurrentK - ticker.PreviousK);
                 ticker.OrderValue = Math.Sqrt(ticker.DeltaD * ticker.DeltaD + ticker.DeltaK * ticker.DeltaK);
             }
 
@@ -79,27 +80,19 @@ namespace StockMarketAnalysis.Smoulder
             {
                 _tickers.Remove(ticker);
                 _tickers.Add(ticker);
-                Console.WriteLine($"{ticker.Ticker}: No Change sending to {_tickers.IndexOf(ticker)}");
+                WriteToConsole($"{ticker.Ticker}: No Change sending to {_tickers.IndexOf(ticker)}");
             }
             else
             {
                 _tickers.Remove(ticker);
 
-                int insertPosition;
-                if (ticker.OrderValue > 5)
-                {
-                    insertPosition = 0;
-                }
-                else
-                {
-                    var halfLength = _tickers.Count / 2.0;
-                    var percentageThrough = ticker.OrderValue / 5;
-                    insertPosition = (int)Math.Ceiling(halfLength * (1 - percentageThrough));
-                }
+                var halfLength = _tickers.Count / 2.0;
+                var percentageThrough = ticker.OrderValue / 100;
+                var insertPosition = (int) Math.Ceiling(halfLength * (1 - percentageThrough));
 
                 _tickers.Insert(insertPosition, ticker);
 
-                Console.WriteLine($"{ticker.Ticker}: Change {ticker.OrderValue}, sending to {_tickers.IndexOf(ticker)}");
+                WriteToConsole($"{ticker.Ticker}: Change {ticker.OrderValue}, sending to {_tickers.IndexOf(ticker)}");
             }
         }
 
@@ -107,7 +100,8 @@ namespace StockMarketAnalysis.Smoulder
         {
             try
             {
-                var stochResponse = _avapiConnection.GetQueryObject_STOCH().Query(ticker, Const_STOCH.STOCH_interval.n_1min, 10, 10, 10,
+                var stochResponse = _avapiConnection.GetQueryObject_STOCH().Query(ticker,
+                    Const_STOCH.STOCH_interval.n_1min, 10, 10, 10,
                     Const_STOCH.STOCH_slowkmatype.n_0, Const_STOCH.STOCH_slowdmatype.n_0);
 
                 var queueData = new StockData
@@ -128,9 +122,14 @@ namespace StockMarketAnalysis.Smoulder
             return null;
         }
 
+        private void WriteToConsole(string output)
+        {
+            Console.WriteLine("Loader - " + output);
+        }
+
         public override async Task Startup(IStartupParameters startupParameters)
         {
-            var parameters = (StartupParameters)startupParameters;
+            var parameters = (StartupParameters) startupParameters;
             _rateLimit = parameters.RateLimit;
             _avapiConnection = AvapiConnection.Instance;
             _avapiConnection.Connect(parameters.ApiKey);
@@ -138,7 +137,7 @@ namespace StockMarketAnalysis.Smoulder
             _tickers = new List<TickerDetails>();
             foreach (var spcomany in _sp100)
             {
-                _tickers.Add(new TickerDetails { Ticker = spcomany });
+                _tickers.Add(new TickerDetails {Ticker = spcomany});
             }
         }
     }
