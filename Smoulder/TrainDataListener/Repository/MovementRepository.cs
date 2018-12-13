@@ -192,152 +192,166 @@ namespace TrainDataListener.Repository
             }
         }
 
-        private void AddChangeOfIdentity(MovementItem movementItem)
+        private void AddChangeOfIdentity(TrustMessage trustMessage)
         {
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.header.msg_queue_timestamp);
-            DateTime? eventTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.event_timestamp);
+            var movementItem = (TrainChangeIdentityMsgV1)trustMessage.MessageData;
+            var movementData = movementItem.TrainChangeIdentityData;
+            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
+            DateTime? eventTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.EventTimestamp);
 
             DataRow dataRow = changeOfIdentityDataTable.NewRow();
-            dataRow[Columns.msg_type] = GetValue(movementItem.header.msg_type);
-            dataRow[Columns.source_dev_id] = GetValue(movementItem.header.source_dev_id);
-            dataRow[Columns.user_id] = GetValue(movementItem.header.user_id);
-            dataRow[Columns.original_data_source] = GetValue(movementItem.header.original_data_source);
+            dataRow[Columns.msg_type] = GetValue("0007");
+            dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
+            dataRow[Columns.user_id] = GetValue(movementItem.Sender.UserID);
+            dataRow[Columns.original_data_source] = GetValue("TOPS");
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
-            dataRow[Columns.source_system_id] = GetValue(movementItem.header.source_system_id);
-            dataRow[Columns.train_id] = GetValue(movementData.train_id);
-            dataRow[Columns.current_train_id] = GetValue(movementData.current_train_id);
-            dataRow[Columns.revised_train_id] = GetValue(movementData.revised_train_id);
-            dataRow[Columns.train_file_address] = GetValue(movementData.train_file_address);
-            dataRow[Columns.train_service_code] = GetValue(movementData.train_service_code);
+            dataRow[Columns.source_system_id] = GetValue("TRUST");
+            dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.revised_train_id] = GetValue(movementData.RevisedTrainID);
+            dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
+            dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
             dataRow[Columns.event_timestamp] = (object)eventTimestamp ?? DBNull.Value;
 
             changeOfIdentityDataTable.Rows.Add(dataRow);
         }
 
-        private void AddChangeOfOrigin(MovementItem movementItem)
+        private void AddChangeOfOrigin(TrustMessage trustMessage)
         {
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.header.msg_queue_timestamp);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.dep_timestamp);
-            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.original_loc_timestamp);
-            DateTime? cooTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.coo_timestamp);
+            var movementItem = (TrainChangeOriginMsgV1)trustMessage.MessageData;
+            var movementData = movementItem.TrainChangeOriginData;
+
+            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
+            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? cooTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.EventTimestamp);
 
             DataRow dataRow = changeOfOriginDataTable.NewRow();
-            dataRow[Columns.msg_type] = GetValue(movementItem.header.msg_type);
-            dataRow[Columns.source_dev_id] = GetValue(movementItem.header.source_dev_id);
-            dataRow[Columns.user_id] = GetValue(movementItem.header.user_id);
-            dataRow[Columns.original_data_source] = GetValue(movementItem.header.original_data_source);
+            dataRow[Columns.msg_type] = GetValue("0006");
+            dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
+            dataRow[Columns.user_id] = GetValue(movementItem.Sender.UserID);
+            dataRow[Columns.original_data_source] = GetValue("TRUST DA");
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
-            dataRow[Columns.source_system_id] = GetValue(movementItem.header.source_system_id);
-            dataRow[Columns.train_id] = GetValue(movementData.train_id);
+            dataRow[Columns.source_system_id] = GetValue("TRUST");
+            dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
             dataRow[Columns.dep_timestamp] = (object)depTimestamp ?? DBNull.Value;
-            dataRow[Columns.loc_stanox] = GetValue(movementData.loc_stanox);
-            dataRow[Columns.original_loc_stanox] = GetValue(movementData.original_loc_stanox);
+            dataRow[Columns.loc_stanox] = GetValue(movementData.LocationStanox);
+            dataRow[Columns.original_loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.original_loc_timestamp] = (object)originalLocTimestamp ?? DBNull.Value;
-            dataRow[Columns.current_train_id] = GetValue(movementData.current_train_id);
-            dataRow[Columns.train_service_code] = GetValue(movementData.train_service_code);
-            dataRow[Columns.reason_code] = GetValue(movementData.reason_code);
-            dataRow[Columns.division_code] = GetValue(movementData.division_code);
-            dataRow[Columns.toc_id] = GetValue(movementData.toc_id);
-            dataRow[Columns.train_file_address] = GetValue(movementData.train_file_address);
+            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
+            dataRow[Columns.reason_code] = GetValue(movementData.ReasonCode);
+            dataRow[Columns.division_code] = GetValue(movementData.Division);
+            dataRow[Columns.toc_id] = GetValue(movementData.TOC);
+            dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
             dataRow[Columns.coo_timestamp] = (object)cooTimestamp ?? DBNull.Value;
 
             changeOfOriginDataTable.Rows.Add(dataRow);
         }
 
-        private void AddReinstatement(MovementItem movementItem)
+        private void AddReinstatement(TrustMessage trustMessage)
         {
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.header.msg_queue_timestamp);
-            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.original_loc_timestamp);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.dep_timestamp);
-            DateTime? reinstatementTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.reinstatement_timestamp);
+            var movementItem = (TrainReinstatementMsgV1)trustMessage.MessageData;
+            var movementData = movementItem.TrainReinstatementData;
+
+            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
+            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.LocationStanox);
+            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? reinstatementTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
 
             DataRow dataRow = reinstatementDataTable.NewRow();
 
-            dataRow[Columns.msg_type] = GetValue(movementItem.header.msg_type);
-            dataRow[Columns.source_dev_id] = GetValue(movementItem.header.source_dev_id);
-            dataRow[Columns.user_id] = GetValue(movementItem.header.user_id);
-            dataRow[Columns.original_data_source] = GetValue(movementItem.header.original_data_source);
+            dataRow[Columns.msg_type] = GetValue("0005");
+            dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
+            dataRow[Columns.user_id] = GetValue(movementItem.Sender.UserID);
+            dataRow[Columns.original_data_source] = GetValue("TOPS");
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
-            dataRow[Columns.source_system_id] = GetValue(movementItem.header.source_system_id);
-            dataRow[Columns.train_id] = GetValue(movementData.train_id);
-            dataRow[Columns.current_train_id] = GetValue(movementData.current_train_id);
+            dataRow[Columns.source_system_id] = GetValue("TRUST");
+            dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
             dataRow[Columns.original_loc_timestamp] = (object)originalLocTimestamp ?? DBNull.Value;
             dataRow[Columns.dep_timestamp] = (object)depTimestamp ?? DBNull.Value;
-            dataRow[Columns.loc_stanox] = GetValue(movementData.loc_stanox);
-            dataRow[Columns.original_loc_stanox] = GetValue(movementData.original_loc_stanox);
+            dataRow[Columns.loc_stanox] = GetValue(movementData.LocationStanox);
+            dataRow[Columns.original_loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.reinstatement_timestamp] = (object)reinstatementTimestamp ?? DBNull.Value;
-            dataRow[Columns.division_code_id] = GetValue(movementData.division_code_id);
-            dataRow[Columns.train_file_address] = GetValue(movementData.train_file_address);
-            dataRow[Columns.train_service_code] = GetValue(movementData.train_service_code);
+            dataRow[Columns.division_code_id] = GetValue(movementData.Division);
+            dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
+            dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
 
             reinstatementDataTable.Rows.Add(dataRow);
         }
 
-        private void AddTrainCancellation(MovementItem movementItem)
+        private void AddTrainCancellation(TrustMessage trustMessage)
         {
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.header.msg_queue_timestamp);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.dep_timestamp);
-            DateTime? canxTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.canx_timestamp);
-            DateTime? origLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.orig_loc_timestamp);
+            var movementItem = (TrainCancellationMsgV1)trustMessage.MessageData;
+            var movementData = movementItem.TrainCancellationData;
+
+            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
+            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? canxTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? origLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
 
             DataRow dataRow = cancellatoDataTable.NewRow();
-            dataRow[Columns.msg_type] = GetValue(movementItem.header.msg_type);
-            dataRow[Columns.source_dev_id] = GetValue(movementItem.header.source_dev_id);
-            dataRow[Columns.user_id] = GetValue(movementItem.header.user_id);
-            dataRow[Columns.original_data_source] = GetValue(movementItem.header.original_data_source);
+            dataRow[Columns.msg_type] = GetValue("0002");
+            dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
+            dataRow[Columns.user_id] = GetValue(movementItem.Sender.UserID);
+            dataRow[Columns.original_data_source] = GetValue("TOPS");
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
-            dataRow[Columns.source_system_id] = GetValue(movementItem.header.source_system_id);
+            dataRow[Columns.source_system_id] = GetValue("TRUST");
 
-            dataRow[Columns.train_id] = GetValue(movementData.train_id);
-            dataRow[Columns.orig_loc_stanox] = GetValue(movementData.orig_loc_stanox);
+            dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.orig_loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.orig_loc_timestamp] = (object)origLocTimestamp ?? DBNull.Value;
-            dataRow[Columns.toc_id] = GetValue(movementData.toc_id);
+            dataRow[Columns.toc_id] = GetValue(movementData.TOC);
             dataRow[Columns.dep_timestamp] = (object)depTimestamp ?? DBNull.Value;
-            dataRow[Columns.division_code] = GetValue(movementData.division_code);
-            dataRow[Columns.loc_stanox] = GetValue(movementData.loc_stanox);
+            dataRow[Columns.division_code] = GetValue(movementData.Division);
+            dataRow[Columns.loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.canx_timestamp] = (object)canxTimestamp ?? DBNull.Value;
-            dataRow[Columns.canx_reason_code] = GetValue(movementData.canx_reason_code);
-            dataRow[Columns.canx_type] = GetValue(movementData.canx_type);
-            dataRow[Columns.train_service_code] = GetValue(movementData.train_service_code);
-            dataRow[Columns.train_file_address] = GetValue(movementData.train_file_address);
+            dataRow[Columns.canx_reason_code] = GetValue(movementData.ReasonCode);
+            dataRow[Columns.canx_type] = GetValue(movementData.TrainCancellationType);
+            dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
+            dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
 
             cancellatoDataTable.Rows.Add(dataRow);
 
         }
 
-        private void AddTrainActivation(MovementItem movementItem)
+        private void AddTrainActivation(TrustMessage trustMessage)
         {
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.header.msg_queue_timestamp);
-            DateTime? createdTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.creation_timestamp);
-            DateTime? originDepTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.origin_dep_timestamp);
+            var movementItem = (TrainActivationMsgV1)trustMessage.MessageData;
+            var movementData = movementItem.TrainActivationData;
+
+            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
+            DateTime? createdTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.TrainPlanOriginTimestamp);
+            DateTime? originDepTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.TrainPlanOriginTimestamp);
 
             DataRow dataRow = activationDataTable.NewRow();
 
-            dataRow[Columns.msg_type] = GetValue(movementItem.header.msg_type);
-            dataRow[Columns.source_dev_id] = GetValue(movementItem.header.source_dev_id);
-            dataRow[Columns.user_id] = GetValue(movementItem.header.user_id);
-            dataRow[Columns.original_data_source] = GetValue(movementItem.header.original_data_source);
+            dataRow[Columns.msg_type] = GetValue("0001");
+            dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
+            dataRow[Columns.user_id] = GetValue(movementItem.Sender.UserID);
+            dataRow[Columns.original_data_source] = GetValue("TSIA");
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
-            dataRow[Columns.source_system_id] = GetValue(movementItem.header.source_system_id);
+            dataRow[Columns.source_system_id] = GetValue("TRUST");
 
-            dataRow[Columns.schedule_source] = GetValue(movementData.schedule_source);
-            dataRow[Columns.train_file_address] = GetValue(movementData.train_file_address);
-            dataRow[Columns.schedule_end_date] = GetValue(movementData.schedule_end_date);
-            dataRow[Columns.train_id] = GetValue(movementData.train_id);
-            dataRow[Columns.tp_origin_timestamp] = GetValue(movementData.tp_origin_timestamp);
+            dataRow[Columns.schedule_source] = GetValue(movementData.ScheduleSource);
+            dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
+            dataRow[Columns.schedule_end_date] = GetValue(movementData.ScheduleEndTimestamp);
+            dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.tp_origin_timestamp] = GetValue(movementData.TrainPlanOriginTimestamp);
             dataRow[Columns.creation_timestamp] = (object)createdTimestamp ?? DBNull.Value;
-            dataRow[Columns.tp_origin_stanox] = GetValue(movementData.tp_origin_stanox);
+            dataRow[Columns.tp_origin_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.origin_dep_timestamp] = (object)originDepTimestamp ?? DBNull.Value;
-            dataRow[Columns.train_service_code] = GetValue(movementData.train_service_code);
-            dataRow[Columns.toc_id] = GetValue(movementData.toc_id);
-            dataRow[Columns.d1266_record_number] = GetValue(movementData.d1266_record_number);
-            dataRow[Columns.train_call_type] = GetValue(movementData.train_call_type);
-            dataRow[Columns.train_uid] = GetValue(movementData.train_uid);
-            dataRow[Columns.train_call_mode] = GetValue(movementData.train_call_mode);
-            dataRow[Columns.schedule_type] = GetValue(movementData.schedule_type);
-            dataRow[Columns.sched_origin_stanox] = GetValue(movementData.sched_origin_stanox);
-            dataRow[Columns.schedule_wtt_id] = GetValue(movementData.schedule_wtt_id);
-            dataRow[Columns.schedule_start_date] = GetValue(movementData.schedule_start_date);
+            dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
+            dataRow[Columns.toc_id] = GetValue(movementData.TOC);
+            dataRow[Columns.d1266_record_number] = GetValue(movementData.TOPSUID);
+            dataRow[Columns.train_call_type] = GetValue(movementData.TrainCallMode);
+            dataRow[Columns.train_uid] = GetValue(movementData.UIDNumber);
+            dataRow[Columns.train_call_mode] = GetValue(movementData.TrainCallMode);
+            dataRow[Columns.schedule_type] = GetValue(movementData.ScheduleType);
+            dataRow[Columns.sched_origin_stanox] = GetValue(movementData.LocationStanox);
+            dataRow[Columns.schedule_wtt_id] = GetValue(movementData.ScheduledWTTID);
+            dataRow[Columns.schedule_start_date] = GetValue(movementData.ScheduleStartTimestamp);
 
             activationDataTable.Rows.Add(dataRow);
         }
