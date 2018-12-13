@@ -55,6 +55,8 @@
     <Compile Include="Smoulder\Loader.cs" />
     <Compile Include="Smoulder\Processor.cs" />
     <Compile Include="Smoulder\ConnectionParameters.cs" />
+    <Compile Include="TrainData\TrainChangeIdentityMsgV1.cs" />
+    <Compile Include="TrainData\TrainChangeIdentityData.cs" />
     <Compile Include="TrainData\TrainReinstatementMsgV1.cs" />
     <Compile Include="TrainData\TrainReinstatementData.cs" />
     <Compile Include="TrainData\TrustMessage.cs" />

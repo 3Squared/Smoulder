@@ -49,7 +49,7 @@ namespace TrainDataListener.Smoulder
             try
             {
                 XmlDocument doc = new XmlDocument();
-                doc.LoadXml(messageBody);
+                doc.LoadXml(messageBody); // This is most expensive bit, refactor this first
                 var messageType = doc.DocumentElement.Name;
 
                 TrustMessage trustMessage = null;
@@ -64,7 +64,6 @@ namespace TrainDataListener.Smoulder
                         {
                             MessageData = (TrainMovementMsgV1) serialiser.Deserialize(reader),
                             MessageType = TrustMessageType.Movement
-
                         };
 
                         break;
@@ -74,7 +73,6 @@ namespace TrainDataListener.Smoulder
                         {
                             MessageData = (TrainActivationMsgV1)serialiser.Deserialize(reader),
                             MessageType = TrustMessageType.Activation
-
                         };
                         break;
                     case "TrainChangeOriginMsgV1":
@@ -83,7 +81,6 @@ namespace TrainDataListener.Smoulder
                         {
                             MessageData = (TrainChangeOriginMsgV1)serialiser.Deserialize(reader),
                             MessageType = TrustMessageType.ChangeOrigin
-
                         };
                         break;
                     case "TrainCancellationMsgV1":
@@ -92,7 +89,22 @@ namespace TrainDataListener.Smoulder
                         {
                             MessageData = (TrainCancellationMsgV1)serialiser.Deserialize(reader),
                             MessageType = TrustMessageType.Cancellation
-
+                        };
+                        break;
+                    case "TrainReinstatementMsgV1":
+                        serialiser = new XmlSerializer(typeof(TrainReinstatementMsgV1));
+                        trustMessage = new TrustMessage
+                        {
+                            MessageData = (TrainReinstatementMsgV1)serialiser.Deserialize(reader),
+                            MessageType = TrustMessageType.Reinstatement
+                        };
+                        break;
+                    case "TrainChangeIdentityMsgV1":
+                        serialiser = new XmlSerializer(typeof(TrainChangeIdentityMsgV1));
+                        trustMessage = new TrustMessage
+                        {
+                            MessageData = (TrainChangeIdentityMsgV1)serialiser.Deserialize(reader),
+                            MessageType = TrustMessageType.ChangeIdentity
                         };
                         break;
                     default:
