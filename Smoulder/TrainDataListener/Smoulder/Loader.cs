@@ -36,7 +36,11 @@ namespace TrainDataListener.Smoulder
 
             //Parse the xml
             var trustMessage = ParseXml(body);
-            ProcessorQueue.Enqueue(trustMessage);
+
+            if (trustMessage != null)
+            {
+                ProcessorQueue.Enqueue(trustMessage);
+            }
         }
 
         private void WriteToConsole(string output)
@@ -65,7 +69,6 @@ namespace TrainDataListener.Smoulder
                             MessageData = (TrainMovementMsgV1) serialiser.Deserialize(reader),
                             MessageType = TrustMessageType.Movement
                         };
-
                         break;
                     case "TrainActivationMsgV1":
                         serialiser = new XmlSerializer(typeof(TrainActivationMsgV1));
@@ -108,6 +111,7 @@ namespace TrainDataListener.Smoulder
                         };
                         break;
                     default:
+                        //TODO Add TrainChangeLocationMsgs
                         WriteToConsole(messageBody);
                         break;
                 }

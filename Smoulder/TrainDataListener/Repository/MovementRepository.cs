@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using TrainDataListener.TrainData;
 
 namespace TrainDataListener.Repository
 {
-    public class SqlServerMovementRepository
+    public class MovementRepository : BaseRepository
     {
-
         private static DataTable movementDataTable = new DataTable("Movement");
         private static DataTable activationDataTable = new DataTable("MovementActivation");
         private static DataTable cancellatoDataTable = new DataTable("MovementCancellation");
         private static DataTable reinstatementDataTable = new DataTable("MovementReinstatement");
-        private static DataTable changeOfOriginDataTable = new DataTable("MovementChangeOfOrigin");
-        private static DataTable changeOfIdentityDataTable = new DataTable("MovementChangeOfIdentity");
+        private static DataTable changeOfOriginDataTable = new DataTable("MovementChangeOrigin");
+        private static DataTable changeOfIdentityDataTable = new DataTable("MovementChangeIdentity");
 
         protected string GetValue(string value)
         {
@@ -25,7 +24,30 @@ namespace TrainDataListener.Repository
             return value;
         }
 
-        static SqlServerMovementRepository()
+        protected void WriteDataTableToDatabase(DataTable table)
+        {
+            if (table.Rows.Count == 0)
+            {
+                return;
+            }
+            using (SqlConnection conn = GetSqlConnection())
+            {
+                conn.Open();
+                using (SqlBulkCopy s = new SqlBulkCopy(conn))
+                {
+                    s.BulkCopyTimeout = 600;
+                    s.DestinationTableName = table.TableName;
+                    s.BatchSize = 100000;
+                    foreach (var column in table.Columns)
+                    {
+                        s.ColumnMappings.Add(column.ToString(), column.ToString());
+                    }
+                    s.WriteToServer(table);
+                }
+            }
+        }
+
+        static MovementRepository()
         {
             movementDataTable.Columns.Add(new DataColumn(Columns.id));
             movementDataTable.Columns.Add(new DataColumn(Columns.msg_type));
@@ -196,8 +218,8 @@ namespace TrainDataListener.Repository
         {
             var movementItem = (TrainChangeIdentityMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainChangeIdentityData;
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? eventTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.EventTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? eventTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
             DataRow dataRow = changeOfIdentityDataTable.NewRow();
             dataRow[Columns.msg_type] = GetValue("0007");
@@ -221,10 +243,10 @@ namespace TrainDataListener.Repository
             var movementItem = (TrainChangeOriginMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainChangeOriginData;
 
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? cooTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementData.EventTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? depTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? originalLocTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? cooTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
             DataRow dataRow = changeOfOriginDataTable.NewRow();
             dataRow[Columns.msg_type] = GetValue("0006");
@@ -254,10 +276,10 @@ namespace TrainDataListener.Repository
             var movementItem = (TrainReinstatementMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainReinstatementData;
 
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.LocationStanox);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? reinstatementTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? originalLocTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? depTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? reinstatementTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
             DataRow dataRow = reinstatementDataTable.NewRow();
 
@@ -286,10 +308,10 @@ namespace TrainDataListener.Repository
             var movementItem = (TrainCancellationMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainCancellationData;
 
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? depTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? canxTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? origLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? depTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? canxTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? origLocTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
             DataRow dataRow = cancellatoDataTable.NewRow();
             dataRow[Columns.msg_type] = GetValue("0002");
@@ -321,9 +343,9 @@ namespace TrainDataListener.Repository
             var movementItem = (TrainActivationMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainActivationData;
 
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? createdTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.TrainPlanOriginTimestamp);
-            DateTime? originDepTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.TrainPlanOriginTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? createdTimestamp = DateTime.Parse(movementData.TrainPlanOriginTimestamp);
+            DateTime? originDepTimestamp = DateTime.Parse(movementData.TrainPlanOriginTimestamp);
 
             DataRow dataRow = activationDataTable.NewRow();
 
@@ -360,11 +382,11 @@ namespace TrainDataListener.Repository
         {
             var movementItem = (TrainMovementMsgV1) trustMessage.MessageData;
             var movementData = movementItem.TrainMovementData;
-            DateTime? msgQueueTimestamp = DateConverter.ConvertUnixEpochToDateTime(movementItem.Timestamp);
-            DateTime? gbttTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementItem.TrainMovementData.GBTTTimestamp);
-            DateTime? actualTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? originalLocTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
-            DateTime? plannedTimestamp = DateConverter.CorrectUnixEpochDaylightSavingDatTime(movementData.EventTimestamp);
+            DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
+            DateTime? gbttTimestamp = DateTime.Parse(movementItem.TrainMovementData.GBTTTimestamp??DateTime.Now.ToString()); //Fight me
+            DateTime? actualTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? originalLocTimestamp = DateTime.Parse(movementData.EventTimestamp);
+            DateTime? plannedTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
             DataRow dataRow = movementDataTable.NewRow();
             dataRow[Columns.msg_type] = GetValue("0003");

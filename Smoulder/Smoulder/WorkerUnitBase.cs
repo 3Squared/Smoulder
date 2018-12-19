@@ -6,7 +6,6 @@ namespace Smoulder
 {
     public abstract class WorkerUnitBase : IWorkerUnit
     {
-
         public virtual async Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters)
         {
             await Startup(startupParameters);

@@ -51,6 +51,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\BaseRepository.cs" />
+    <Compile Include="Repository\DateConverter.cs" />
+    <Compile Include="Repository\Columns.cs" />
+    <Compile Include="Repository\MovementRepository.cs" />
+    <Compile Include="Repository\ScheduleRepository.cs" />
+    <Compile Include="ScheduleData\Schedule.cs" />
     <Compile Include="Smoulder\Distributor.cs" />
     <Compile Include="Smoulder\Loader.cs" />
     <Compile Include="Smoulder\Processor.cs" />
