@@ -122,7 +122,7 @@ namespace TrainDataListener.Smoulder
             {
                 Console.WriteLine(e);
                 WriteToConsole(messageBody);
-                throw;
+                return null;
             }
         }
 
