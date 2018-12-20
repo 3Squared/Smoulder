@@ -39,6 +39,9 @@
     <Reference Include="Apache.NMS.ActiveMQ, Version=1.7.2.4108, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
       <HintPath>..\packages\Apache.NMS.ActiveMQ.1.7.2\lib\net40\Apache.NMS.ActiveMQ.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,7 +59,10 @@
     <Compile Include="Repository\Columns.cs" />
     <Compile Include="Repository\MovementRepository.cs" />
     <Compile Include="Repository\ScheduleRepository.cs" />
+    <Compile Include="ScheduleData\ScheduleLocation.cs" />
+    <Compile Include="ScheduleData\CachedTrainData.cs" />
     <Compile Include="ScheduleData\Schedule.cs" />
+    <Compile Include="ScheduleData\ScheduleSegment.cs" />
     <Compile Include="Smoulder\Distributor.cs" />
     <Compile Include="Smoulder\Loader.cs" />
     <Compile Include="Smoulder\Processor.cs" />

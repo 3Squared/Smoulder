@@ -190,7 +190,6 @@ namespace TrainDataListener.Repository
         /// <param name="movementItems"></param>    
         public void AddTrustMessage(TrustMessage trustMessage)
         {
-
             switch (trustMessage.MessageType)
             {
                 case TrustMessageType.Movement:
@@ -229,7 +228,7 @@ namespace TrainDataListener.Repository
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
             dataRow[Columns.source_system_id] = GetValue("TRUST");
             dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
-            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = null;
             dataRow[Columns.revised_train_id] = GetValue(movementData.RevisedTrainID);
             dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
             dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);

@@ -128,6 +128,11 @@ namespace TrainDataListener.Smoulder
 
         public override async Task Startup(IStartupParameters startupParameters)
         {
+            await Connect();
+        }
+
+        private async Task Connect()
+        {
             var topic = "NR.TRUST";
 
             var brokerUri = $"activemq:tcp://52.166.187.36:61616"; // Default port
@@ -138,7 +143,6 @@ namespace TrainDataListener.Smoulder
             _session = _connection.CreateSession(AcknowledgementMode.AutoAcknowledge);
             _dest = _session.GetTopic(topic);
             _consumer = _session.CreateConsumer(_dest);
-
         }
 
         public override async Task Finalise()

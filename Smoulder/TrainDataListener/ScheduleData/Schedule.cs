@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TrainDataListener.ScheduleData
 {
     public class Schedule
     {
-        public int id;
+        public long id;
         public string CIF_bank_holiday_running;
         public string CIF_stp_indicator;
         public string CIF_train_uid;
@@ -17,5 +18,6 @@ namespace TrainDataListener.ScheduleData
         public string transaction_type;
         public bool is_deleted;
         public DateTime last_modified;
+        public List<ScheduleSegment> scheduleSegments;
     }
 }

@@ -23,6 +23,7 @@ namespace TrainDataListener.Smoulder
                 var trustMessage = (TrustMessage) incomingData;
 
                 _movementRepository.AddTrustMessage(trustMessage);
+                DistributorQueue.Enqueue(trustMessage);
                 unflushedRows++;
             }
             else

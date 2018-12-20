@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using Smoulder.Interfaces;
 
 namespace TrainDataListener.TrainData
 {

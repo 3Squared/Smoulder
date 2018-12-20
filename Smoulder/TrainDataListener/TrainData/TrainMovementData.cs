@@ -76,5 +76,7 @@ namespace TrainDataListener.TrainData
 
         [XmlElement(ElementName = "TrainFileAddress", Namespace = "http://xml.networkrail.co.uk/ns/2008/Train")]
         public string TrainFileAddress { get; set; }
+
+        public int Delay => VariationStatus == "Early" ? -int.Parse(TimetableVariation) : int.Parse(TimetableVariation);
     }
 }

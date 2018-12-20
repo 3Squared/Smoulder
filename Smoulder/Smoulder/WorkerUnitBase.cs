@@ -14,6 +14,7 @@ namespace Smoulder
                 Action(cancellationToken);
             }
         }
+
         public virtual async Task Start(CancellationToken cancellationToken)
         {
             await Startup();
