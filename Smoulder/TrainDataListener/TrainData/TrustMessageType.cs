@@ -7,6 +7,7 @@
         Cancellation = 2,
         ChangeOrigin = 3,
         ChangeIdentity = 4,
-        Reinstatement = 5
+        Reinstatement = 5,
+        ChangeLocation = 6
     }
 }

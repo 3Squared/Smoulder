@@ -28,7 +28,7 @@ namespace TrainDataListener.Smoulder
             }
             else
             {
-                Thread.Sleep(10);
+                Thread.Sleep(250);
             }
 
             if (unflushedCycles >= _flushCycles)
@@ -47,7 +47,7 @@ namespace TrainDataListener.Smoulder
         
         private void WriteToConsole(string output)
         {
-            Console.WriteLine("Processor - " + output);
+            Console.WriteLine($"Processor - {DateTime.Now} " + output);
         }
 
         public override async Task Startup(IStartupParameters startupParameters)

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
+using TrainDataListener.ScheduleData;
 using TrainDataListener.TrainData;
 
 namespace TrainDataListener.Repository
@@ -185,9 +188,9 @@ namespace TrainDataListener.Repository
         }
 
         /// <summary>
-        /// 
+        /// Saves a trust message to the appropriate table
         /// </summary>
-        /// <param name="movementItems"></param>    
+        /// <param name="trustMessage"></param>    
         public void AddTrustMessage(TrustMessage trustMessage)
         {
             switch (trustMessage.MessageType)
@@ -200,16 +203,24 @@ namespace TrainDataListener.Repository
                     break;
                 case TrustMessageType.Cancellation:
                     AddTrainCancellation(trustMessage);
+                    Flush();
                     break;
                 case TrustMessageType.ChangeOrigin:
                     AddChangeOfOrigin(trustMessage);
+                    Flush();
                     break;
                 case TrustMessageType.ChangeIdentity:
                     AddChangeOfIdentity(trustMessage);
+                    Flush();
                     break;
                 case TrustMessageType.Reinstatement:
                     AddReinstatement(trustMessage);
+                    Flush();
                     break;
+                case TrustMessageType.ChangeLocation:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -220,6 +231,8 @@ namespace TrainDataListener.Repository
             DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
             DateTime? eventTimestamp = DateTime.Parse(movementData.EventTimestamp);
 
+            var currentTrainID = GetCurrentTrainId(movementData.OriginalTrainID);
+
             DataRow dataRow = changeOfIdentityDataTable.NewRow();
             dataRow[Columns.msg_type] = GetValue("0007");
             dataRow[Columns.source_dev_id] = GetValue(movementItem.Sender.SessionID);
@@ -228,7 +241,7 @@ namespace TrainDataListener.Repository
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
             dataRow[Columns.source_system_id] = GetValue("TRUST");
             dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
-            dataRow[Columns.current_train_id] = null;
+            dataRow[Columns.current_train_id] = currentTrainID;
             dataRow[Columns.revised_train_id] = GetValue(movementData.RevisedTrainID);
             dataRow[Columns.train_file_address] = GetValue(movementData.TrainFileAddress);
             dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
@@ -237,10 +250,25 @@ namespace TrainDataListener.Repository
             changeOfIdentityDataTable.Rows.Add(dataRow);
         }
 
+        private string GetCurrentTrainId(string originalTrainId)
+        {
+            var getCurrentTrainId = "SELECT top 1 [revised_train_id] " +
+                                    "FROM MovementChangeIdentity " +
+                                    "where train_id = '" + originalTrainId +
+                                    "' order by event_timestamp desc";
+            using (IDbConnection conn = GetSqlConnection())
+            {
+                var currentTrainId = conn.Query<string>(getCurrentTrainId).FirstOrDefault();
+                return currentTrainId;
+            }
+        }
+
         private void AddChangeOfOrigin(TrustMessage trustMessage)
         {
             var movementItem = (TrainChangeOriginMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainChangeOriginData;
+
+            var currentTrainID = GetCurrentTrainId(movementData.OriginalTrainID);
 
             DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
             DateTime? depTimestamp = DateTime.Parse(movementData.EventTimestamp);
@@ -259,7 +287,7 @@ namespace TrainDataListener.Repository
             dataRow[Columns.loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.original_loc_stanox] = GetValue(movementData.LocationStanox);
             dataRow[Columns.original_loc_timestamp] = (object)originalLocTimestamp ?? DBNull.Value;
-            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = GetValue(currentTrainID);
             dataRow[Columns.train_service_code] = GetValue(movementData.TrainServiceCode);
             dataRow[Columns.reason_code] = GetValue(movementData.ReasonCode);
             dataRow[Columns.division_code] = GetValue(movementData.Division);
@@ -275,6 +303,8 @@ namespace TrainDataListener.Repository
             var movementItem = (TrainReinstatementMsgV1)trustMessage.MessageData;
             var movementData = movementItem.TrainReinstatementData;
 
+            var currentTrainID = GetCurrentTrainId(movementData.OriginalTrainID);
+
             DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
             DateTime? originalLocTimestamp = DateTime.Parse(movementData.EventTimestamp);
             DateTime? depTimestamp = DateTime.Parse(movementData.EventTimestamp);
@@ -289,7 +319,7 @@ namespace TrainDataListener.Repository
             dataRow[Columns.msg_queue_timestamp] = (object)msgQueueTimestamp ?? DBNull.Value;
             dataRow[Columns.source_system_id] = GetValue("TRUST");
             dataRow[Columns.train_id] = GetValue(movementData.OriginalTrainID);
-            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = GetValue(currentTrainID);
             dataRow[Columns.original_loc_timestamp] = (object)originalLocTimestamp ?? DBNull.Value;
             dataRow[Columns.dep_timestamp] = (object)depTimestamp ?? DBNull.Value;
             dataRow[Columns.loc_stanox] = GetValue(movementData.LocationStanox);
@@ -381,6 +411,9 @@ namespace TrainDataListener.Repository
         {
             var movementItem = (TrainMovementMsgV1) trustMessage.MessageData;
             var movementData = movementItem.TrainMovementData;
+
+            var currentId = GetCurrentTrainId(movementData.OriginalTrainID);
+
             DateTime? msgQueueTimestamp = DateTime.Parse(movementItem.Timestamp);
             DateTime? gbttTimestamp = DateTime.Parse(movementItem.TrainMovementData.GBTTTimestamp??DateTime.Now.ToString()); //Fight me
             DateTime? actualTimestamp = DateTime.Parse(movementData.EventTimestamp);
@@ -400,7 +433,7 @@ namespace TrainDataListener.Repository
             dataRow[Columns.planned_timestamp] = (object)plannedTimestamp ?? DBNull.Value;
             dataRow[Columns.timetable_variation] = GetValue(movementData.TimetableVariation);
             dataRow[Columns.original_loc_timestamp] = (object)originalLocTimestamp ?? DBNull.Value;
-            dataRow[Columns.current_train_id] = GetValue(movementData.OriginalTrainID);
+            dataRow[Columns.current_train_id] = GetValue(currentId);
             dataRow[Columns.delay_monitoring_point] = GetValue(movementData.DelayMonitoringFlag);
             dataRow[Columns.next_report_run_time] = GetValue(movementData.NextReportRunTime);
             dataRow[Columns.reporting_stanox] = GetValue(movementData.ReportingLocationStanox);

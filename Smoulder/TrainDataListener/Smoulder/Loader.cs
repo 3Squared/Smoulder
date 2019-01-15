@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -110,8 +109,15 @@ namespace TrainDataListener.Smoulder
                             MessageType = TrustMessageType.ChangeIdentity
                         };
                         break;
+                    case "TrainChangeLocationMsgV1":
+                        serialiser = new XmlSerializer(typeof(TrainChangeLocationMsgV1));
+                        trustMessage = new TrustMessage
+                        {
+                            MessageData = (TrainChangeLocationMsgV1)serialiser.Deserialize(reader),
+                            MessageType = TrustMessageType.ChangeLocation
+                        };
+                        break;
                     default:
-                        //TODO Add TrainChangeLocationMsgs
                         WriteToConsole(messageBody);
                         break;
                 }

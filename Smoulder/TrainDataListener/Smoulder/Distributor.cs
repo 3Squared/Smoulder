@@ -19,7 +19,7 @@ namespace TrainDataListener.Smoulder
             if (DistributorQueue.TryDequeue(out var incomingData))
             {
                 var trustMessage = (TrustMessage)incomingData;
-                WriteToConsole(trustMessage.MessageType.ToString() + $" - {unflushedCycles}");
+                WriteToConsole(unflushedCycles + " - " + trustMessage.MessageType.ToString());
                 _scheduleRepository.ProcessSchedule(trustMessage);
             }
             else
@@ -38,12 +38,12 @@ namespace TrainDataListener.Smoulder
 
         private void WriteToConsole(string output)
         {
-            Console.WriteLine("Distributor - " + output);
+            Console.WriteLine($"Distributor - {DateTime.Now} " + output);
         }
 
         public override async Task Startup(IStartupParameters startupParameters)
         {
-            _flushCycles = 10000;
+            _flushCycles = 100;
             _scheduleRepository = new ScheduleRepository();
             var flushedRows = _scheduleRepository.CleanUp();
             WriteToConsole($"{flushedRows} flushed by distributor on startup");

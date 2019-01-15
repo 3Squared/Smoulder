@@ -328,7 +328,7 @@ namespace TrainDataListener.Repository
         public int CleanUp()
         {
             const string sql = @"DELETE FROM [dbo].[CachedTrainData]
-            WHERE scheduled_arrival < CONVERT(DATETIME, CONVERT(VARCHAR(10), DATEADD(D, -1, GETDATE()), 126) + ' 00:00:00')";
+            WHERE scheduled_arrival < DATEADD(hh, -1, GETDATE())";
 
             using (IDbConnection connection = GetSqlConnection())
             {
