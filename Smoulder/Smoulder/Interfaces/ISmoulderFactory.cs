@@ -1,6 +1,6 @@
 ﻿namespace Smoulder.Interfaces
 {
-    internal interface ISmoulderFactory
+    public interface ISmoulderFactory
     {
         Smoulder Build(ILoader loader, IProcessor processor, IDistributor distributor);
     }

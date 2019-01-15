@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Ben Wesson</Authors>
+    <Company>3Squared</Company>
+    <Description>A simple framework for processing continuous data sources</Description>
+    <Copyright>Copyright © 3Squared</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://gitlab.3squared.com/BenWesson/Smoulder</RepositoryUrl>
+    <PackageTags />
+    <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.1.1</FileVersion>
+    <PackageReleaseNotes>ISmoulderFactory is now a public interface</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>
