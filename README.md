@@ -2,16 +2,13 @@
 
 ## TODO
 - Play with the namespaces to try and find a better solution than Smoulder.Smoulder
-- Allow passing of arbitrary parameters into the Smoulder on creation that propagate down to the worker units
-- Create a "I'm finished flag" to be passed up from each of the workerunits. Once all 3 flags are set, have the smoulder fire the cancellation token to actually close out all the worker units.#
-- Add optional Startup Method
 
 ## Introduction
 Smoulder meets the need for low-profile, slow burn processing of data in a non-time critical environment. Intended uses include aggregating statistics over a constant data stream and creating arbitrarily complex reports on large data volumes with the ability to take snapshots of the current resultant states without waiting for completion or interrupting the data processing. This is achieved by separating data preparation, processing and aggregation of results into separate loosely-coupled processes, linked together by defined data packets through internally accessible message queues.
 The entire system can be implemented by creating new concrete implementations of the base abstract interfaces, allowing for real flexibility in the applications the system can be used for. Each of the three parts of the system is built to be run in a separate thread, allowing performance to scale up or down depending on the hardware the system is hosted on and decoupling each process from the other. They will communicate with each other over two concurrent queues, a thread-safe feature of C#.
 ## System Description
 ### Loader
-This component is responsible for converting the incoming data into usable data packets, using customisable data validation to sanitise incoming data. Data can then be bundled into a data packet containing multiple data points, or simply applied as a stream of single data points using a customisable data object. This stream of sanitised data is then made available to the Processor by means of an inter-thread message queue.
+This component is responsible for retrieving data and converting it into usable data packets. Data can then be bundled into a data packet containing multiple data points, or simply applied as a stream of single data points using a customisable data object. This stream of sanitised data is then made available to the Processor by means of an inter-thread message queue called the ProcessorQueue.
 ### Processor
 Responsible for computing the results from the provided data packet, retains necessary information about previous data packets if required. This could be keeping track of a cumulative number (e.g. number of data objects meeting a certain criterion) or calculated statistics (e.g. number of peaks in a continuous data stream).
 These produced results are bundled into a results object that is then made available to the Distributor by means of a message queue.
@@ -38,7 +35,7 @@ The point of this is obviously not to actually make any money, but the www.alpha
 Changing the Task.Delays to Thread.Sleeps has made the CPU usage make sense, no longer maxes out at 100%. Means the StockMarket exercise has already been fortuitous. Further, it's lead to optional parameters for the startup() methods, a good step forward methinks.
 
 ####Planned Improvements
-I am going to move on from this. There are improvements I would like to make to this program, but they are domain specific and wouldn't help the Smoulder project progress. That said:
+There are improvements I would like to make to this program, but they are domain specific and wouldn't help the Smoulder project progress. That said:
 - Get the stock price at the point of the buy/sell decision in the distributor so I can work out if the system would actually have worked.
 - Instead of taking .First from the slowK and slowD data series, use all the data returned, then analyse all the new data. This will significantly improve the granularity of the decision making process and there is easily the processing time to spare.
 
@@ -46,15 +43,6 @@ I am going to move on from this. There are improvements I would like to make to 
 Martin can give me an ActiveMQ with some real train data on it coming down from TD.NET. It's his test connection, so this would be a good use for it until the project kicks off. The throughput will be much higher than the StockMarket Analysis so it should make for a good progression. This is not intended to be a prototype, first version nor to see the light of day. It is intended to be a test bed for Smoulder using high-volume, relevant, real-world data.
 
 Do I want 1 Smoulder for each data type? That would be preferable methinks. Wonder if I can reuse the loader if I write it generic. Good thing the startup() is configurable...
-
-#####Loader
-- Consume ActiveMQ message queue
-- Test if bundling concurrent data up into packages to reduce queue load works, or if just to pass the data through as fast as possible.
-	- If bundling is on, what bundling strategy should I use? I'm nervous about flat rate, but variable rates are also pretty scary. I guess it should scale with queue.Count(), but be capped at the performance limit. I bet there's some maths to say have a flat minimum rate at Count = 1, and have the rate 
-#####Processor
-- Bundling for bulk database writes is almost certainly going to be fastest way of doing this. SQLBulkTransfer library? Maybe pass it off to an async writer module if this is a bottleneck. Would mean bottleneck would still be at writespeed, but the Processor wouldn't need to wait to line the next write operation up, and would give good scalability to a multi-core system.
-#####Distributor
-- Test if it's possible to curate a small cached table at speed. Don't worry about writing to database for archiving purposes, Processor has that down.
 
 ## Setup
 ### Data Objects
@@ -64,3 +52,11 @@ Decide the form of your data objects. One will implement IProcessDataObject, the
 Create Loader, Processor and Distributor classes that are members of ILoader, IProcessor and IDistributor. Override the Action() method for each with the action that you want the worker unit to take each cycle. Optionally, you can override the Finalise() method on each to do any data cleanup/final reporting when the worker unit is stopped. Consider that there may be data on the queues when the units are stopped, so you may want to either allow all the data to stream through the pipeline before close, dump all the data still in the queues to a file etc.
 
 The Loader has access to the ProcessorQueue, the Processor has access to the ProcessorQueue and DistributorQueue, and the Distributor has access to the Distributor Queue. The queues will be hooked up in the Smoulder.Start() method, so you can assume they are successfully hooked up by the time you get to the Action() method.
+The implementation of the worker units should:
+-implement relevant interface
+-Extend the relevant workerUNitBase (i.e. myProcessor: ProcessorBase, IProcessor)
+-Override the Action() method
+
+Optionally, the implementation can override:
+-one of the overloads of Startup(), which is called when the Smoulder.Start() method is called. This allows you to initialise any variables from the passed in startupParameters object that can't be done in the constructor.
+-the Finalise() which will be called when the Smoulder.Stop() method is called. This could be used to ensure all the remaining data is processed before the smoulder shuts down.
