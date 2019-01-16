@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockMarketAnalysis", "Stoc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainDataListener", "TrainDataListener\TrainDataListener.csproj", "{5DE5AF99-AE9C-4D1C-9A5D-AD388E59089D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestBedProjects", "TestBedProjects", "{EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{71E15927-58C0-462B-931F-9A2752FE0756} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
+		{97FB3E1D-0F72-46D5-929F-8073CF842C2B} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
+		{05970FF8-B704-4B3E-BF26-E5275765F40D} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
+		{5DE5AF99-AE9C-4D1C-9A5D-AD388E59089D} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7F016F6-5D8C-43B4-89BA-2A464A24048E}
