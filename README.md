@@ -84,3 +84,20 @@ There are other configurations for this, for example you could use a blocking re
 
 #### Startup()
 Startup is deliberatly distict to the constructor so that a Smoulder can be restarted after being stopped. The constructor will only run when the workerUnits are instantiated, but the Startup method is called every time the Smoulder.Start() method is called. An example for a use for this is closing a connection to a message queue in the Finalise() method and connecting in the Startup() method.
+
+### Instantiation
+Once classes for the workerUnits have been created, a Smoulder object can be instantiated. This is acheived with following two lines:
+
+    var smoulderFactory = new SmoulderFactory();
+    var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
+    
+Obviously, any way of creating concrete implementations of the workerUnits can be done, such as through an IOC container.
+After instantiating the Smoulder object, starting it is as simple as:
+
+    smoulder.Start();
+    
+While stopping can be achieved with:
+
+    smoulder.Stop();
+    
+When the Start() and Stop() methods are called is left entirely up to the implementing developer. For example, If the smoulder is being used inside a windows service the OnStart() and OnStop() methods are obvious candidates.
