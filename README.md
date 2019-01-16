@@ -49,9 +49,8 @@ Do I want 1 Smoulder for each data type? That would be preferable methinks. Wond
 Decide the form of your data objects. One will implement IProcessDataObject, the other will implement IDistributeDataObject.
 
 ### Worker units
-Create Loader, Processor and Distributor classes that are members of ILoader, IProcessor and IDistributor. Override the Action() method for each with the action that you want the worker unit to take each cycle. Optionally, you can override the Finalise() method on each to do any data cleanup/final reporting when the worker unit is stopped. Consider that there may be data on the queues when the units are stopped, so you may want to either allow all the data to stream through the pipeline before close, dump all the data still in the queues to a file etc.
+Create Loader, Processor and Distributor classes that are members of ILoader, IProcessor and IDistributor. The Loader has access to the ProcessorQueue, the Processor has access to the ProcessorQueue and DistributorQueue, and the Distributor has access to the Distributor Queue. The queues will be hooked up in the Smoulder.Start() method, so you can assume they are successfully hooked up by the time you get to the Action() method.
 
-The Loader has access to the ProcessorQueue, the Processor has access to the ProcessorQueue and DistributorQueue, and the Distributor has access to the Distributor Queue. The queues will be hooked up in the Smoulder.Start() method, so you can assume they are successfully hooked up by the time you get to the Action() method.
 The implementation of the worker units should:
 -implement relevant interface
 -Extend the relevant workerUNitBase (i.e. myProcessor: ProcessorBase, IProcessor)
@@ -60,3 +59,28 @@ The implementation of the worker units should:
 Optionally, the implementation can override:
 -one of the overloads of Startup(), which is called when the Smoulder.Start() method is called. This allows you to initialise any variables from the passed in startupParameters object that can't be done in the constructor.
 -the Finalise() which will be called when the Smoulder.Stop() method is called. This could be used to ensure all the remaining data is processed before the smoulder shuts down.
+
+#### Action()
+The Action() method on a workerUnit is the main payload. This is what will be called continuously until the Smoulder.Stop() method is called. A reccommended format for the action method for a processor would be:
+
+    public override void Action(CancellationToken cancellationToken)
+       {
+           if (ProcessorQueue.TryDequeue(out var incomingData)) //Retrieve data from queue
+        {
+            //Do something with the data
+            IDistributeDataObject outgoingData = Do.Something(incomingData);
+            
+            //Pass the transformed data to the distributor
+            DistributorQueue.Enqueue(rawData); //
+        }
+        else
+        {
+            //Sleep the thread to free up recourses until there is something on the queue to read
+            Thread.Sleep(250);
+        }
+    }
+
+There are other configurations for this, for example you could use a blocking retrieve method in a loader to safely wait on so you don't need the sleep. The implementaiton of the Action() method is ultimately up to the imagination of the implementing developer.
+
+#### Startup()
+Startup is deliberatly distict to the constructor so that a Smoulder can be restarted after being stopped. The constructor will only run when the workerUnits are instantiated, but the Startup method is called every time the Smoulder.Start() method is called. An example for a use for this is closing a connection to a message queue in the Finalise() method and connecting in the Startup() method.
