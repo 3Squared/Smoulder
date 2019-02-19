@@ -60,7 +60,8 @@ namespace TemperatureAnalysis.Smoulder
                             _maxPeak = _maxPeak,
                             _startDate = _startDate,
                             _totalCount = _totalCount,
-                            Month = _currentMonth.Value
+                            Month = _currentMonth.Value,
+                            Year = _currentYear.Value
                         });
                         _totalCount = 0;
                         _peakCount = 0;
@@ -114,11 +115,12 @@ namespace TemperatureAnalysis.Smoulder
                 _maxPeak = _maxPeak,
                 _startDate = _startDate,
                 _totalCount = _totalCount,
-                Month = _currentMonth.Value
+                Month = _currentMonth.Value,
+                Year = _currentYear.Value
             });
             foreach (var monthData in Months)
             {
-                Console.WriteLine("For Month {0}",monthData.Month);
+                Console.WriteLine("For Month {0}, year {1}",monthData.Month, monthData.Year);
                 Console.WriteLine("Average Temperature during office hours {0:0.0}", monthData._average);
                 Console.WriteLine("Average Peak Temperature during office hours {0:0.0}", monthData._averagePeak);
                 Console.WriteLine("Max Temperature {0:0.0}", monthData._maxPeak.Temperature);
@@ -126,12 +128,14 @@ namespace TemperatureAnalysis.Smoulder
                 Console.WriteLine("Number of Data points {0}", monthData._totalCount);
                 Console.WriteLine("Start Date {0}", monthData._startDate?.ToShortDateString());
                 Console.WriteLine("End Date {0}", monthData._endDate.ToShortDateString());
+                Console.WriteLine("");
             }
         }
 
         private class MonthData
         {
             public int Month = 0;
+            public int Year = 0;
             public decimal _average;
             public decimal _averagePeak;
             public Peak _maxPeak = new Peak();
