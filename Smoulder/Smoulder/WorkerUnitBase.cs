@@ -20,11 +20,11 @@ namespace Smoulder
             await Startup();
             while (!cancellationToken.IsCancellationRequested)
             {
-                Action(cancellationToken);
+                await Task.Factory.StartNew(() => Action(cancellationToken), cancellationToken);
             }
         }
 
-        public abstract void Action(CancellationToken cancellationToken);
+        public abstract Task Action(CancellationToken cancellationToken);
 
         public virtual async Task Finalise()
         {
