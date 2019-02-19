@@ -9,7 +9,7 @@ namespace StockMarketAnalysis.Smoulder
 {
     public class Distributor : DistributorBase
     {
-        public override async void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
             if (DistributorQueue.TryDequeue(out var incomingData))
             {

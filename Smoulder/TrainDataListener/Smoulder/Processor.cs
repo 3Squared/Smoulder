@@ -16,7 +16,7 @@ namespace TrainDataListener.Smoulder
         private int unflushedCycles = 0;
         private int unflushedRows = 0;
 
-        public override async void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out var incomingData))
             {

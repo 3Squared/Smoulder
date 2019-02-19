@@ -7,7 +7,7 @@ namespace Smoulder.Interfaces
     {
         Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters);
         Task Start(CancellationToken cancellationToken);
-        void Action(CancellationToken cancellationToken);
+        Task Action(CancellationToken cancellationToken);
         Task Finalise();
     }
 }

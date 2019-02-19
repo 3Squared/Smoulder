@@ -14,7 +14,7 @@ namespace TemperatureAnalysis.Smoulder
         private int _count;
         private decimal _temperatureSum;
 
-        public override async void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
             var runningArray = new List<LoadedTempData>();
             var data = new LoadedTempData { Id = -1 };

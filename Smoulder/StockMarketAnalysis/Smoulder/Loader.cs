@@ -18,7 +18,7 @@ namespace StockMarketAnalysis.Smoulder
 
         private AvapiConnection _avapiConnection;
 
-        public override void Action(CancellationToken cancellationToken)
+        public override Task Action(CancellationToken cancellationToken)
         {
             var ticker = _tickers.First();
 
@@ -33,7 +33,7 @@ namespace StockMarketAnalysis.Smoulder
                 {
                     WriteToConsole($"Error getting {ticker.Ticker}: {stochData.ErrorMessage}");
                     Thread.Sleep(_rateLimit);
-                    return;
+                    return null;
                 }
 
                 ticker = UpdateTicker(ticker, stochData);
@@ -46,6 +46,7 @@ namespace StockMarketAnalysis.Smoulder
 
             RepositionTicker(ticker);
             //ReportTickerOrder();
+            return null;
         }
 
         private void ReportTickerOrder()
