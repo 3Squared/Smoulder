@@ -9,7 +9,7 @@ namespace TemperatureAnalysis.Smoulder
     public class Loader : LoaderBase
     {
         private bool _finished = false;
-        public override async void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
             if (_finished)
             {

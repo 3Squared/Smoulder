@@ -15,7 +15,7 @@ namespace StockMarketAnalysis.Smoulder
         private Dictionary<string, TickerDetails> _tickers;
         private TickerDetails _workingTicker;
 
-        public override async void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out var incomingData))
             {

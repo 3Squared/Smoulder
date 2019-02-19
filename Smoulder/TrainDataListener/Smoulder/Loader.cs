@@ -18,7 +18,7 @@ namespace TrainDataListener.Smoulder
         private IDestination _dest;
         private IMessageConsumer _consumer;
 
-        public override void Action(CancellationToken cancellationToken)
+        public override Task Action(CancellationToken cancellationToken)
         {
             //Strip a message off of the queue
             var msg = _consumer.Receive();
@@ -30,7 +30,7 @@ namespace TrainDataListener.Smoulder
             }
             else
             {
-                return;
+                return null;
             }
 
             //Parse the xml
@@ -40,6 +40,7 @@ namespace TrainDataListener.Smoulder
             {
                 ProcessorQueue.Enqueue(trustMessage);
             }
+            return null;
         }
 
         private void WriteToConsole(string output)
