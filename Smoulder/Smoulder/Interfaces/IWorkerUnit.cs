@@ -6,10 +6,10 @@ namespace Smoulder.Interfaces
 {
     public interface IWorkerUnit
     {
-        Task Start(CancellationToken cancellationToken);
-        Task Action(CancellationToken cancellationToken);
-        Task Inaction(CancellationToken cancellationToken);
-        Task Finalise();
-        Task CatchError(Exception e);
+        void Start(CancellationToken cancellationToken);
+        void Action(CancellationToken cancellationToken);
+        void Inaction(CancellationToken cancellationToken);
+        void Finalise();
+        void CatchError(Exception e);
     }
 }

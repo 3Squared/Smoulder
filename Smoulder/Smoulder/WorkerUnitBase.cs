@@ -7,25 +7,24 @@ namespace Smoulder
 {
     public abstract class WorkerUnitBase : IWorkerUnit
     {
-        public abstract Task Start(CancellationToken cancellationToken);
+        public abstract void Start(CancellationToken cancellationToken);
 
-        public abstract Task Action(CancellationToken cancellationToken);
+        public abstract void Action(CancellationToken cancellationToken);
 
-        public virtual Task Inaction(CancellationToken cancellationToken)
+        public virtual void Inaction(CancellationToken cancellationToken)
         {
             Thread.Sleep(1000);
-            return null;
         }
 
-        public virtual async Task Finalise()
+        public virtual void Finalise()
         {
         }
 
-        public virtual async Task Startup()
+        public virtual void Startup()
         {
         }
 
-        public virtual async Task CatchError(Exception e)
+        public virtual void CatchError(Exception e)
         {
             throw e;
         }

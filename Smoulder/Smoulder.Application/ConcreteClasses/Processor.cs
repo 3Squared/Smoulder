@@ -7,7 +7,7 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Processor : ProcessorBase
     {
-        public override Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
             {
@@ -24,10 +24,9 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
                 Random rng = new Random();
                 Task.Delay(rng.Next(1,1000));
             }
-            return null;
         }
 
-        public override async Task Finalise()
+        public override void Finalise()
         {
             Console.WriteLine("Starting Processor finalisation." + ProcessorQueue.Count + " items left to process");
 

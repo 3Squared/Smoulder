@@ -15,9 +15,9 @@ namespace Smoulder
             ProcessorQueue = processorQueue;
         }
 
-        public override async Task Start(CancellationToken cancellationToken)
+        public override void Start(CancellationToken cancellationToken)
         {
-            await Startup();
+            Startup();
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -26,7 +26,7 @@ namespace Smoulder
                 }
                 catch (Exception e)
                 {
-                    await CatchError(e);
+                    CatchError(e);
                 }
             }
         }
