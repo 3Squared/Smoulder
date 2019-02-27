@@ -27,6 +27,7 @@ namespace Smoulder
 
         public virtual async Task CatchError(Exception e)
         {
+            throw e;
         }
     }
 }
