@@ -15,11 +15,17 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
             ProcessorQueue.Enqueue(data);
             Random rng = new Random();
             Task.Delay(rng.Next(1, 500));
+            throw new Exception();
         }
 
         public override void Finalise()
         {
             Task.Delay(500);
+        }
+
+        public override void CatchError(Exception e)
+        {
+            Console.WriteLine("Error caught:" + e);
         }
     }
 }
