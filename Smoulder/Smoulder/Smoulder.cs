@@ -35,7 +35,7 @@ namespace Smoulder
             DistributorCancellationTokenSource = new CancellationTokenSource();
         }
 
-        public async Task Start()
+        public void Start()
         {
             lock (this)
             {
@@ -45,7 +45,7 @@ namespace Smoulder
             }
         }
 
-        public async Task Stop()
+        public void Stop()
         {
             lock (this)
             {
