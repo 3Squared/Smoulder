@@ -49,11 +49,11 @@ namespace Smoulder
             lock (this)
             {
                 LoaderCancellationTokenSource.Cancel();
-                Task.Factory.StartNew(() => _loader.Finalise());
+                _loader.Finalise();
                 ProcessorCancellationTokenSource.Cancel();
-                Task.Factory.StartNew(() => _processor.Finalise());
+                _processor.Finalise();
                 DistributorCancellationTokenSource.Cancel();
-                Task.Factory.StartNew(() => _distributor.Finalise());
+                _distributor.Finalise();
             }
         }
     }
