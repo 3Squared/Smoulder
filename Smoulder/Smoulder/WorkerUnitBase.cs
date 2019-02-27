@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
@@ -6,35 +7,25 @@ namespace Smoulder
 {
     public abstract class WorkerUnitBase : IWorkerUnit
     {
-        public async Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters)
-        {
-            await Startup(startupParameters);
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Action(cancellationToken);
-            }
-        }
-
-        public async Task Start(CancellationToken cancellationToken)
-        {
-            await Startup();
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Factory.StartNew(() => Action(cancellationToken), cancellationToken);
-            }
-        }
+        public abstract Task Start(CancellationToken cancellationToken);
 
         public abstract Task Action(CancellationToken cancellationToken);
+
+        public virtual Task Inaction(CancellationToken cancellationToken)
+        {
+            Thread.Sleep(1000);
+            return null;
+        }
 
         public virtual async Task Finalise()
         {
         }
 
-        public virtual async Task Startup(IStartupParameters startupParameters)
+        public virtual async Task Startup()
         {
         }
 
-        public virtual async Task Startup()
+        public virtual async Task CatchError(Exception e)
         {
         }
     }
