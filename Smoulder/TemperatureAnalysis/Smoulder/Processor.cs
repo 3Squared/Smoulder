@@ -14,7 +14,7 @@ namespace TemperatureAnalysis.Smoulder
         private int _count;
         private decimal _temperatureSum;
 
-        public override async Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             var runningArray = new List<LoadedTempData>();
             var data = new LoadedTempData { Id = -1 };
@@ -56,7 +56,7 @@ namespace TemperatureAnalysis.Smoulder
                 }
                 else
                 {
-                    await Task.Delay(500);
+                    Task.Delay(500);
                 }
             }
         }

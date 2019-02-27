@@ -26,7 +26,7 @@ namespace TemperatureAnalysis.Smoulder
 
         private List<Peak> peaks = new List<Peak>();
 
-        public override async Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -100,12 +100,12 @@ namespace TemperatureAnalysis.Smoulder
                 }
                 else
                 {
-                    await Task.Delay(500);
+                    Task.Delay(500);
                 }
             }
         }
 
-        public override async Task Finalise()
+        public override void Finalise()
         {
             Months.Add(new MonthData
             {

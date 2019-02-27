@@ -9,11 +9,11 @@ namespace TemperatureAnalysis.Smoulder
     public class Loader : LoaderBase
     {
         private bool _finished = false;
-        public override async Task Action(CancellationToken cancellationToken)
+        public override void Action(CancellationToken cancellationToken)
         {
             if (_finished)
             {
-                await Task.Delay(1000);
+                Task.Delay(1000);
                 return;
             }
             using (var reader = new StreamReader(@"TemperatureData.csv"))
