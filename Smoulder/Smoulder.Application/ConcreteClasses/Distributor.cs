@@ -16,11 +16,6 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
                 Random rng = new Random();
                 Task.Delay(rng.Next(1, 250));
             }
-            else
-            {
-                Console.WriteLine("Distributor Skipped, Distributor Queue is empty: " + DistributorQueue.IsEmpty);
-                Task.Delay(50);
-            }
             return null;
         }
 

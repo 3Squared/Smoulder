@@ -24,11 +24,6 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
                 Random rng = new Random();
                 Task.Delay(rng.Next(1,1000));
             }
-            else
-            {
-                Console.WriteLine("Processor Skipped, Processor Queue is empty: " + ProcessorQueue.IsEmpty);
-                Task.Delay(50);
-            }
             return null;
         }
 
