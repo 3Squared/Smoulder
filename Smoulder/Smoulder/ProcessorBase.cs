@@ -1,4 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
@@ -16,6 +19,30 @@ namespace Smoulder
         public void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue)
         {
             DistributorQueue = distributorQueue;
+        }
+
+        public override async Task Start(CancellationToken cancellationToken)
+        {
+            await Startup();
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    if (ProcessorQueue.IsEmpty)
+                    {
+                        Inaction(cancellationToken);
+
+                    }
+                    else
+                    {
+                        Action(cancellationToken);
+                    }
+                }
+                catch (Exception e)
+                {
+                    await CatchError(e);
+                }
+            }
         }
     }
 }
