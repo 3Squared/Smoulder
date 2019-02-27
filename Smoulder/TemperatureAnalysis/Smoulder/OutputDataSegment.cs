@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Smoulder.Interfaces;
+﻿using Smoulder.Interfaces;
 using TemperatureAnalysis.TempSpecificClasses;
 
 namespace TemperatureAnalysis.Smoulder

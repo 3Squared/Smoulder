@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Smoulder.Interfaces
+﻿namespace Smoulder.Interfaces
 {
     public interface ISmoulder
     {
