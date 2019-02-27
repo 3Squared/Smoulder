@@ -27,81 +27,75 @@ namespace TemperatureAnalysis.Smoulder
 
         public override void Action(CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            if (DistributorQueue.TryDequeue(out var incomingData))
             {
-                if (DistributorQueue.TryDequeue(out var incomingData))
+                var data = (OutputDataSegment) incomingData;
+
+                if (!_startDate.HasValue)
                 {
-                    var data = (OutputDataSegment) incomingData;
-
-                    if (!_startDate.HasValue)
-                    {
-                        _startDate = data.Peak.Time.Date;
-                    }
-
-                    if (!_currentMonth.HasValue)
-                    {
-                        _currentMonth = data.Peak.Time.Month;
-                        _currentYear = data.Peak.Time.Year;
-                    }
-
-                    if (data.Peak.Time.Date > _endDate)
-                    {
-                        _endDate = data.Peak.Time;
-                    }
-
-                    if (_currentMonth < data.Peak.Time.Month || _currentYear < data.Peak.Time.Year)
-                    {
-                        Months.Add(new MonthData
-                        {
-                            _average = _average,
-                            _averagePeak = _averagePeak,
-                            _endDate = _endDate,
-                            _maxPeak = _maxPeak,
-                            _startDate = _startDate,
-                            _totalCount = _totalCount,
-                            Month = _currentMonth.Value,
-                            Year = _currentYear.Value
-                        });
-                        _totalCount = 0;
-                        _peakCount = 0;
-                        _totalSum = 0;
-                        _peakSum = 0;
-                        _average = 0;
-                        _averagePeak = 0;
-                         _maxPeak = new Peak();
-                        _startDate = null;
-                        _endDate = new DateTime();
-                        _currentMonth = data.Peak.Time.Month;
-                        _currentYear = data.Peak.Time.Year;
-                    }
-
-
-                    _totalCount = _totalCount + data.Count;
-                    _peakCount++;
-                    _totalSum = _totalSum + data.TemperatureSum;
-                    _peakSum = _peakSum + data.Peak.Temperature;
-                    _average = _totalSum / _totalCount;
-                    _averagePeak = _peakSum / _peakCount;
-                    peaks.Add(data.Peak);
-
-                    if (data.Peak.Temperature > _maxPeak.Temperature)
-                    {
-                        _maxPeak = data.Peak;
-                    }
-
-                    Console.WriteLine(
-                        "{0}: PeakTime {1}, PeakTemp {2:0.0}, DailyAverage {3:0.0}, runningAverage {4:0.0}, runningMaxTemp {5:0.0}",
-                        (data.Peak.Time.DayOfWeek + " - " + data.Peak.Time.ToShortDateString()).PadRight(22),
-                        data.Peak.Time.TimeOfDay,
-                        data.Peak.Temperature,
-                        data.TemperatureSum / data.Count,
-                        _average, _maxPeak.Temperature);
+                    _startDate = data.Peak.Time.Date;
                 }
-                else
+
+                if (!_currentMonth.HasValue)
                 {
-                    Task.Delay(500);
+                    _currentMonth = data.Peak.Time.Month;
+                    _currentYear = data.Peak.Time.Year;
                 }
+
+                if (data.Peak.Time.Date > _endDate)
+                {
+                    _endDate = data.Peak.Time;
+                }
+
+                if (_currentMonth < data.Peak.Time.Month || _currentYear < data.Peak.Time.Year)
+                {
+                    Months.Add(new MonthData
+                    {
+                        _average = _average,
+                        _averagePeak = _averagePeak,
+                        _endDate = _endDate,
+                        _maxPeak = _maxPeak,
+                        _startDate = _startDate,
+                        _totalCount = _totalCount,
+                        Month = _currentMonth.Value,
+                        Year = _currentYear.Value
+                    });
+                    _totalCount = 0;
+                    _peakCount = 0;
+                    _totalSum = 0;
+                    _peakSum = 0;
+                    _average = 0;
+                    _averagePeak = 0;
+                    _maxPeak = new Peak();
+                    _startDate = null;
+                    _endDate = new DateTime();
+                    _currentMonth = data.Peak.Time.Month;
+                    _currentYear = data.Peak.Time.Year;
+                }
+
+
+                _totalCount = _totalCount + data.Count;
+                _peakCount++;
+                _totalSum = _totalSum + data.TemperatureSum;
+                _peakSum = _peakSum + data.Peak.Temperature;
+                _average = _totalSum / _totalCount;
+                _averagePeak = _peakSum / _peakCount;
+                peaks.Add(data.Peak);
+
+                if (data.Peak.Temperature > _maxPeak.Temperature)
+                {
+                    _maxPeak = data.Peak;
+                }
+
+                Console.WriteLine(
+                    "{0}: PeakTime {1}, PeakTemp {2:0.0}, DailyAverage {3:0.0}, runningAverage {4:0.0}, runningMaxTemp {5:0.0}",
+                    (data.Peak.Time.DayOfWeek + " - " + data.Peak.Time.ToShortDateString()).PadRight(22),
+                    data.Peak.Time.TimeOfDay,
+                    data.Peak.Temperature,
+                    data.TemperatureSum / data.Count,
+                    _average, _maxPeak.Temperature);
             }
+
         }
 
         public override void Finalise()

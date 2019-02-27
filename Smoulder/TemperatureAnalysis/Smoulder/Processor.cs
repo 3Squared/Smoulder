@@ -15,46 +15,36 @@ namespace TemperatureAnalysis.Smoulder
         public override void Action(CancellationToken cancellationToken)
         {
             var runningArray = new List<LoadedTempData>();
-            var data = new LoadedTempData { Id = -1 };
-
-            while (!cancellationToken.IsCancellationRequested)
+            var data = new LoadedTempData {Id = -1};
+            if (ProcessorQueue.TryDequeue(out var incomingData))
             {
-                if (ProcessorQueue.TryDequeue(out var incomingData))
+                data = (LoadedTempData) incomingData;
+                runningArray.Add(data);
+
+                var peakedData = new LoadedTempData();
+                if (ProcessorQueue.TryPeek(out var incomingPeakedData))
                 {
-                    data = (LoadedTempData) incomingData;
-                    runningArray.Add(data);
-
-                    var peakedData = new LoadedTempData();
-                    if (ProcessorQueue.TryPeek(out var incomingPeakedData))
-                    {
-                        peakedData = (LoadedTempData)incomingPeakedData;
-                    }
-
-                    if (peakedData.Time.Date > data.Time.Date)
-                    {
-                        _count = runningArray.Count;
-                        _temperatureSum = runningArray.Sum(x => x.Temperature);
-                        var peak = runningArray.OrderBy(x => x.Temperature).Last();
-
-                        DistributorQueue.Enqueue(new OutputDataSegment
-                        {
-                            Count = _count,
-                            TemperatureSum = _temperatureSum,
-                            LastId = runningArray.Last().Id,
-                            Peak = new Peak
-                            {
-                                Id = peak.Id,
-                                Temperature = peak.Temperature,
-                                Time = peak.Time
-                            }
-                        });
-                        break;
-                    }
-
+                    peakedData = (LoadedTempData) incomingPeakedData;
                 }
-                else
+
+                if (peakedData.Time.Date > data.Time.Date)
                 {
-                    Task.Delay(500);
+                    _count = runningArray.Count;
+                    _temperatureSum = runningArray.Sum(x => x.Temperature);
+                    var peak = runningArray.OrderBy(x => x.Temperature).Last();
+
+                    DistributorQueue.Enqueue(new OutputDataSegment
+                    {
+                        Count = _count,
+                        TemperatureSum = _temperatureSum,
+                        LastId = runningArray.Last().Id,
+                        Peak = new Peak
+                        {
+                            Id = peak.Id,
+                            Temperature = peak.Temperature,
+                            Time = peak.Time
+                        }
+                    });
                 }
             }
         }
