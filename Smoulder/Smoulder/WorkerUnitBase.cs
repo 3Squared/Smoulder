@@ -12,7 +12,6 @@ namespace Smoulder
 
         public virtual void Inaction(CancellationToken cancellationToken)
         {
-            Thread.Sleep(1000);
         }
 
         public virtual void Finalise()
