@@ -32,7 +32,7 @@ namespace TemperatureAnalysis.Smoulder
                     {
                         Id = int.Parse(values[0]),
                         Time = DateTime.Parse(values[1]),
-                        Temperature = decimal.Parse(values[2])
+                        Temperature = double.Parse(values[2])
 
                     };
 

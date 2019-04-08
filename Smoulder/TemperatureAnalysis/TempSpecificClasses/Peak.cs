@@ -8,6 +8,6 @@ namespace TemperatureAnalysis.TempSpecificClasses
     {
         public int Id;
         public DateTime Time;
-        public decimal Temperature;
+        public double Temperature;
     }
 }
