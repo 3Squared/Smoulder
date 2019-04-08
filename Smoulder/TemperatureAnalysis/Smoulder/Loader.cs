@@ -9,6 +9,11 @@ namespace TemperatureAnalysis.Smoulder
     public class Loader : LoaderBase
     {
         private bool _finished = false;
+        private const DayOfWeek StartOfWeek = DayOfWeek.Monday;
+        private const DayOfWeek EndOfWeek = DayOfWeek.Friday;
+        private readonly TimeSpan _startOfDay = new TimeSpan(8, 0, 0);
+        private readonly TimeSpan _endOfDay = new TimeSpan(18, 0, 0);
+
         public override async Task Action(CancellationToken cancellationToken)
         {
             if (_finished)
@@ -18,11 +23,6 @@ namespace TemperatureAnalysis.Smoulder
             }
             using (var reader = new StreamReader(@"TemperatureData.csv"))
             {
-                const DayOfWeek startOfWeek = DayOfWeek.Monday;
-                const DayOfWeek endOfWeek = DayOfWeek.Friday;
-                var startOfDay = new TimeSpan(8, 0, 0);
-                var endOfDay = new TimeSpan(18, 0, 0);
-
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -36,10 +36,10 @@ namespace TemperatureAnalysis.Smoulder
 
                     };
 
-                    if (potentialTempData.Time.DayOfWeek >= startOfWeek &&
-                        potentialTempData.Time.DayOfWeek <= endOfWeek &&
-                        (potentialTempData.Time.TimeOfDay >= startOfDay &&
-                         potentialTempData.Time.TimeOfDay <= endOfDay))
+                    if (potentialTempData.Time.DayOfWeek >= StartOfWeek &&
+                        potentialTempData.Time.DayOfWeek <= EndOfWeek &&
+                        (potentialTempData.Time.TimeOfDay >= _startOfDay &&
+                         potentialTempData.Time.TimeOfDay <= _endOfDay))
                     {
                         ProcessorQueue.Enqueue(potentialTempData);
                     }
