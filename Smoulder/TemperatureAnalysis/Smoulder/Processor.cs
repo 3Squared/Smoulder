@@ -11,7 +11,7 @@ namespace TemperatureAnalysis.Smoulder
 {
     public class Processor : ProcessorBase
     {
-        public override async Task Action(CancellationToken cancellationToken)
+        public override async void Action(CancellationToken cancellationToken)
         {
             var dayData = new List<LoadedTempData>();
             var data = new LoadedTempData { Id = -1 };

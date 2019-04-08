@@ -14,7 +14,7 @@ namespace TemperatureAnalysis.Smoulder
         private readonly TimeSpan _startOfDay = new TimeSpan(8, 0, 0);
         private readonly TimeSpan _endOfDay = new TimeSpan(18, 0, 0);
 
-        public override async Task Action(CancellationToken cancellationToken)
+        public override async void Action(CancellationToken cancellationToken)
         {
             if (_finished)
             {

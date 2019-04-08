@@ -13,7 +13,7 @@ namespace TemperatureAnalysis.Smoulder
         private List<Day> _daysInMonth = new List<Day>();
         private List<MonthData> _months = new List<MonthData>();
 
-        public override async Task Action(CancellationToken cancellationToken)
+        public override async void Action(CancellationToken cancellationToken)
         {
             if (DistributorQueue.TryDequeue(out var incomingData))
             {
@@ -56,7 +56,7 @@ namespace TemperatureAnalysis.Smoulder
             }
         }
 
-        public override async Task Finalise()
+        public override async void Finalise()
         {
             _months.Add(new MonthData
             {
