@@ -13,10 +13,11 @@ namespace TemperatureAnalysis
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
             smoulder.Start();
 
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
 
             smoulder.Stop();
 
+            Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
     }

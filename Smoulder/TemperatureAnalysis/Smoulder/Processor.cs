@@ -1,49 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Smoulder;
+using Smoulder.Interfaces;
 using TemperatureAnalysis.TempSpecificClasses;
 
 namespace TemperatureAnalysis.Smoulder
 {
     public class Processor : ProcessorBase
     {
-        private int _count;
-        private decimal _temperatureSum;
-
-        public override void Action(CancellationToken cancellationToken)
+        public override async Task Action(CancellationToken cancellationToken)
         {
-            var runningArray = new List<LoadedTempData>();
-            var data = new LoadedTempData {Id = -1};
-            if (ProcessorQueue.TryDequeue(out var incomingData))
+            var dayData = new List<LoadedTempData>();
+            var data = new LoadedTempData { Id = -1 };
+
+            while (!cancellationToken.IsCancellationRequested)
             {
-                data = (LoadedTempData) incomingData;
-                runningArray.Add(data);
-
-                var peakedData = new LoadedTempData();
-                if (ProcessorQueue.TryPeek(out var incomingPeakedData))
+                if (ProcessorQueue.TryDequeue(out var incomingData))
                 {
-                    peakedData = (LoadedTempData) incomingPeakedData;
-                }
+                    data = (LoadedTempData) incomingData;
+                    dayData.Add(data);
 
-                if (peakedData.Time.Date > data.Time.Date)
-                {
-                    _count = runningArray.Count;
-                    _temperatureSum = runningArray.Sum(x => x.Temperature);
-                    var peak = runningArray.OrderBy(x => x.Temperature).Last();
-
-                    DistributorQueue.Enqueue(new OutputDataSegment
+                    var peekedData = new LoadedTempData();
+                    if (ProcessorQueue.TryPeek(out var incomingPeakedData))
                     {
-                        Count = _count,
-                        TemperatureSum = _temperatureSum,
-                        LastId = runningArray.Last().Id,
-                        Peak = new Peak
+                        peekedData = (LoadedTempData)incomingPeakedData;
+                    }
+
+                    if (peekedData.Time.Date > data.Time.Date) //Current data is the last measurement of the day
+                    {
+                        var peak = dayData.OrderBy(x => x.Temperature).Last();
+
+                        DistributorQueue.Enqueue(new Day
                         {
-                            Id = peak.Id,
-                            Temperature = peak.Temperature,
-                            Time = peak.Time
-                        }
-                    });
+                            Count = dayData.Count,
+                            AverageTemp = dayData.Sum(ltd => ltd.Temperature)/ dayData.Count,
+                            Peak = new Peak
+                            {
+                                Id = peak.Id,
+                                Temperature = peak.Temperature,
+                                Time = peak.Time
+                            },
+                            Minimum = dayData.OrderBy(x => x.Temperature).First().Temperature,
+                            Date = data.Time.Date
+
+                        });
+                        break;
+                    }
+
+                }
+                else
+                {
+                    await Task.Delay(500);
                 }
             }
         }

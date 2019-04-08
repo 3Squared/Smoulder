@@ -7,6 +7,6 @@ namespace TemperatureAnalysis.Smoulder
     {
         public int Id;
         public DateTime Time;
-        public decimal Temperature;
+        public double Temperature;
     }
 }
