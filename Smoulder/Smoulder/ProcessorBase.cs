@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class ProcessorBase<TProcessData, TDistributeData> : WorkerUnitBase, IProcessor<TProcessData, TDistributeData>
+    public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData>
     {
         private ConcurrentQueue<TProcessData> _processorQueue;
         private ConcurrentQueue<TDistributeData> _distributorQueue;
@@ -31,7 +31,7 @@ namespace Smoulder
             _distributorQueue.Enqueue(itemToEnqueue);
         }
 
-        public override void Start(CancellationToken cancellationToken)
+        public void Start(CancellationToken cancellationToken)
         {
             Startup();
             while (!cancellationToken.IsCancellationRequested)
@@ -52,6 +52,27 @@ namespace Smoulder
                     OnError(e);
                 }
             }
+        }
+
+        public virtual void Startup()
+        {
+        }
+
+        public virtual void Action(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Finalise()
+        {
+        }
+
+        public virtual void OnError(Exception e)
+        {
+        }
+
+        public virtual void OnNoQueueItem(CancellationToken cancellationToken)
+        {
         }
     }
 }

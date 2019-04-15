@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase<T> : WorkerUnitBase, IDistributor<T>
+    public abstract class DistributorBase<T> : IDistributor<T>
     {
         private ConcurrentQueue<T> _distributorQueue;
 
@@ -20,7 +20,7 @@ namespace Smoulder
             return item;
         }
 
-        public override void Start(CancellationToken cancellationToken)
+        public void Start(CancellationToken cancellationToken)
         {
             Startup();
             while (!cancellationToken.IsCancellationRequested)
@@ -30,7 +30,6 @@ namespace Smoulder
                     if (_distributorQueue.IsEmpty)
                     {
                         OnNoQueueItem(cancellationToken);
-
                     }
                     else
                     {
@@ -42,6 +41,27 @@ namespace Smoulder
                     OnError(e);
                 }
             }
+        }
+
+        public virtual void Startup()
+        {
+        }
+
+        public virtual void Action(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Finalise()
+        {
+        }
+
+        public virtual void OnError(Exception e)
+        {
+        }
+
+        public virtual void OnNoQueueItem(CancellationToken cancellationToken)
+        {
         }
     }
 }

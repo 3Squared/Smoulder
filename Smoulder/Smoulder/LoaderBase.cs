@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class LoaderBase<T> : WorkerUnitBase, ILoader<T>
+    public abstract class LoaderBase<T> : ILoader<T>
     {
         private ConcurrentQueue<T> _processorQueue;
 
@@ -14,7 +14,12 @@ namespace Smoulder
             _processorQueue = processorQueue;
         }
 
-        public override void Start(CancellationToken cancellationToken)
+        public void Enqueue(T itemToEnqueue)
+        {
+            _processorQueue.Enqueue(itemToEnqueue);
+        }
+
+        public void Start(CancellationToken cancellationToken)
         {
             Startup();
             while (!cancellationToken.IsCancellationRequested)
@@ -28,6 +33,23 @@ namespace Smoulder
                     OnError(e);
                 }
             }
+        }
+
+        public virtual void Startup()
+        {
+        }
+
+        public virtual void Action(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Finalise()
+        {
+        }
+
+        public virtual void OnError(Exception e)
+        {
         }
     }
 }
