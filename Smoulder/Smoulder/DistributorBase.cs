@@ -5,13 +5,19 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase : WorkerUnitBase, IDistributor
+    public abstract class DistributorBase<T> : WorkerUnitBase, IDistributor<T>
     {
-        public ConcurrentQueue<IDistributeDataObject> DistributorQueue;
+        private ConcurrentQueue<T> _distributorQueue;
 
-        public void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue)
+        public void RegisterDistributorQueue(ConcurrentQueue<T> distributorQueue)
         {
-            DistributorQueue = distributorQueue;
+            _distributorQueue = distributorQueue;
+        }
+
+        public T Dequeue()
+        {
+            _distributorQueue.TryDequeue(out var item);
+            return item;
         }
 
         public override void Start(CancellationToken cancellationToken)
@@ -21,9 +27,9 @@ namespace Smoulder
             {
                 try
                 {
-                    if (DistributorQueue.IsEmpty)
+                    if (_distributorQueue.IsEmpty)
                     {
-                        Inaction(cancellationToken);
+                        OnNoQueueItem(cancellationToken);
 
                     }
                     else
@@ -33,7 +39,7 @@ namespace Smoulder
                 }
                 catch (Exception e)
                 {
-                    CatchError(e);
+                    OnError(e);
                 }
             }
         }

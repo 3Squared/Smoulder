@@ -10,7 +10,7 @@ namespace Smoulder
 
         public abstract void Action(CancellationToken cancellationToken);
 
-        public virtual void Inaction(CancellationToken cancellationToken)
+        public virtual void OnNoQueueItem(CancellationToken cancellationToken)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Smoulder
         {
         }
 
-        public virtual void CatchError(Exception e)
+        public virtual void OnError(Exception e)
         {
             throw e;
         }

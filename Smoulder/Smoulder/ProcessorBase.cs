@@ -5,19 +5,30 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class ProcessorBase : WorkerUnitBase, IProcessor
+    public abstract class ProcessorBase<TProcessData, TDistributeData> : WorkerUnitBase, IProcessor<TProcessData, TDistributeData>
     {
-        public ConcurrentQueue<IProcessDataObject> ProcessorQueue;
-        public ConcurrentQueue<IDistributeDataObject> DistributorQueue;
+        private ConcurrentQueue<TProcessData> _processorQueue;
+        private ConcurrentQueue<TDistributeData> _distributorQueue;
 
-        public void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue)
+        public void RegisterProcessorQueue(ConcurrentQueue<TProcessData> processorQueue)
         {
-            ProcessorQueue = processorQueue;
+            _processorQueue = processorQueue;
         }
 
-        public void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue)
+        public void RegisterDistributorQueue(ConcurrentQueue<TDistributeData> distributorQueue)
         {
-            DistributorQueue = distributorQueue;
+            _distributorQueue = distributorQueue;
+        }
+
+        public TProcessData Dequeue()
+        {
+            _processorQueue.TryDequeue(out var item);
+            return item;
+        }
+
+        public void Enqueue(TDistributeData itemToEnqueue)
+        {
+            _distributorQueue.Enqueue(itemToEnqueue);
         }
 
         public override void Start(CancellationToken cancellationToken)
@@ -27,10 +38,9 @@ namespace Smoulder
             {
                 try
                 {
-                    if (ProcessorQueue.IsEmpty)
+                    if (_processorQueue.IsEmpty)
                     {
-                        Inaction(cancellationToken);
-
+                        OnNoQueueItem(cancellationToken);
                     }
                     else
                     {
@@ -39,7 +49,7 @@ namespace Smoulder
                 }
                 catch (Exception e)
                 {
-                    CatchError(e);
+                    OnError(e);
                 }
             }
         }

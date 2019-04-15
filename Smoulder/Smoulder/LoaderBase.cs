@@ -5,13 +5,13 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class LoaderBase : WorkerUnitBase, ILoader
+    public abstract class LoaderBase<T> : WorkerUnitBase, ILoader<T>
     {
-        public ConcurrentQueue<IProcessDataObject> ProcessorQueue;
+        private ConcurrentQueue<T> _processorQueue;
 
-        public void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue)
+        public void RegisterProcessorQueue(ConcurrentQueue<T> processorQueue)
         {
-            ProcessorQueue = processorQueue;
+            _processorQueue = processorQueue;
         }
 
         public override void Start(CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ namespace Smoulder
                 }
                 catch (Exception e)
                 {
-                    CatchError(e);
+                    OnError(e);
                 }
             }
         }

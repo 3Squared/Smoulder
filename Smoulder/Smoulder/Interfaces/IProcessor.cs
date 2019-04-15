@@ -1,10 +1,14 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Smoulder.Interfaces
 {
-    public interface IProcessor : IWorkerUnit
+    public interface IProcessor<TProcessData, TDistributeData> : IWorkerUnit
     {
-        void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue);
-        void RegisterDistributorQueue(ConcurrentQueue<IDistributeDataObject> distributorQueue);
+        void RegisterProcessorQueue(ConcurrentQueue<TProcessData> processorQueue);
+        void RegisterDistributorQueue(ConcurrentQueue<TDistributeData> distributorQueue);
+        void OnNoQueueItem(CancellationToken cancellationToken);
+        TProcessData Dequeue();
+        void Enqueue(TDistributeData itemToEnqueue);
     }
 }

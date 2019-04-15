@@ -2,8 +2,9 @@
 
 namespace Smoulder.Interfaces
 {
-    public interface ILoader : IWorkerUnit
+    public interface ILoader<T> : IWorkerUnit
     {
-        void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue);
+        void RegisterProcessorQueue(ConcurrentQueue<T> processorQueue);
+        void Enqueue(T itemToEnqueue);
     }
 }
