@@ -14,6 +14,11 @@ namespace Smoulder
             _distributorQueue = distributorQueue;
         }
 
+        public int GetDistributorQueueCount()
+        {
+            return _distributorQueue.Count;
+        }
+
         public T Dequeue()
         {
             _distributorQueue.TryDequeue(out var item);

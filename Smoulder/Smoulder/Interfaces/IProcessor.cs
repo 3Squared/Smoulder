@@ -10,5 +10,7 @@ namespace Smoulder.Interfaces
         void OnNoQueueItem(CancellationToken cancellationToken);
         TProcessData Dequeue();
         void Enqueue(TDistributeData itemToEnqueue);
+        int GetProcessorQueueCount();
+        int GetDistributorQueueCount();
     }
 }

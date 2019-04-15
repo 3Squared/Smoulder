@@ -31,6 +31,16 @@ namespace Smoulder
             _distributorQueue.Enqueue(itemToEnqueue);
         }
 
+        public int GetProcessorQueueCount()
+        {
+            return _processorQueue.Count;
+        }
+
+        public int GetDistributorQueueCount()
+        {
+            return _distributorQueue.Count;
+        }
+
         public void Start(CancellationToken cancellationToken)
         {
             Startup();

@@ -14,6 +14,11 @@ namespace Smoulder
             _processorQueue = processorQueue;
         }
 
+        public int GetProcessorQueueCount()
+        {
+            return _processorQueue.Count;
+        }
+
         public void Enqueue(T itemToEnqueue)
         {
             _processorQueue.Enqueue(itemToEnqueue);
