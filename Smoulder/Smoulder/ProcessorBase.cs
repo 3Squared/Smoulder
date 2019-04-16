@@ -15,7 +15,7 @@ namespace Smoulder
         public void RegisterProcessorQueue(ConcurrentQueue<TProcessData> processorQueue)
         {
             _processorQueue = processorQueue;
-            _blockingProcessorQueue = new BlockingCollection<TProcessData>(processorQueue);
+            _blockingProcessorQueue = new BlockingCollection<TProcessData>(processorQueue); //TODO Optionally bound the blocking collection
         }
 
         public void RegisterDistributorQueue(ConcurrentQueue<TDistributeData> distributorQueue)
