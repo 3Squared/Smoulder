@@ -7,9 +7,8 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Distributor : DistributorBase<DistributeDataObject>
     {
-        public override void Action(CancellationToken cancellationToken)
+        public override void Action(DistributeDataObject data, CancellationToken cancellationToken)
         {
-                var data = Dequeue();
                 //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
                 Random rng = new Random();
                 Task.Delay(rng.Next(1, 250));
@@ -17,9 +16,8 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 
         public override void Finalise()
         {
-            while (GetDistributorQueueCount() != 0)
+            while (Dequeue(out var data))
             {
-                    var data = Dequeue();
                     //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
                     Random rng = new Random();
             }

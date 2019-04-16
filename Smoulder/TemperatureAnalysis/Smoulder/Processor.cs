@@ -11,34 +11,31 @@ namespace TemperatureAnalysis.Smoulder
 {
     public class Processor : ProcessorBase<LoadedTempData, Day>
     {
-        List<LoadedTempData> dayData = new List<LoadedTempData>();
+        List<LoadedTempData> _dayData = new List<LoadedTempData>();
 
-        public override void Action(CancellationToken cancellationToken)
+        public override void Action(LoadedTempData data, CancellationToken cancellationToken)
         {
-            var data = new LoadedTempData {Id = -1};
-                data = Dequeue();
-                dayData.Add(data);
+                _dayData.Add(data);
 
-            var peekedData = Peek();
-                if (peekedData != null && peekedData.Time.Date > data.Time.Date) //Current data is the last measurement of the day
+                if (Peek(out var peekedData) && peekedData.Time.Date > data.Time.Date) //Current data is the last measurement of the day
                 {
-                    var peak = dayData.OrderBy(x => x.Temperature).Last();
+                    var peak = _dayData.OrderBy(x => x.Temperature).Last();
 
                     Enqueue(new Day
                     {
-                        Count = dayData.Count,
-                        AverageTemp = dayData.Sum(ltd => ltd.Temperature) / dayData.Count,
+                        Count = _dayData.Count,
+                        AverageTemp = _dayData.Sum(ltd => ltd.Temperature) / _dayData.Count,
                         Peak = new Peak
                         {
                             Id = peak.Id,
                             Temperature = peak.Temperature,
                             Time = peak.Time
                         },
-                        Minimum = dayData.OrderBy(x => x.Temperature).First().Temperature,
+                        Minimum = _dayData.OrderBy(x => x.Temperature).First().Temperature,
                         Date = data.Time.Date
 
                     });
-                    dayData = new List<LoadedTempData>();
+                    _dayData = new List<LoadedTempData>();
                 }
         }
 

@@ -7,9 +7,8 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
 {
     public class Processor : ProcessorBase<ProcessDataObject,DistributeDataObject>
     {
-        public override void Action(CancellationToken cancellationToken)
+        public override void Action(ProcessDataObject data, CancellationToken cancellationToken)
         {
-                var data = Dequeue();
                 var result = new DistributeDataObject
                 {
                     DataValue1 = data.DataValue,
@@ -26,9 +25,8 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
         {
             Console.WriteLine("Starting Processor finalisation." + GetProcessorQueueCount() + " items left to process");
 
-            while (GetProcessorQueueCount() != 0)
+            while (Dequeue(out var data))
             {
-                    var data = Dequeue();
                     var result = new DistributeDataObject
                     {
                         DataValue1 = data.DataValue,

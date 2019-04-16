@@ -13,12 +13,8 @@ namespace TemperatureAnalysis.Smoulder
         private List<Day> _daysInMonth = new List<Day>();
         private List<MonthData> _months = new List<MonthData>();
 
-        public override void Action(CancellationToken cancellationToken)
+        public override void Action(Day data, CancellationToken cancellationToken)
         {
-            var data = Dequeue();
-            _daysInMonth.Add(data);
-
-
             var date = (data.Peak.Time.DayOfWeek + " - " + data.Peak.Time.ToShortDateString()).PadRight(22);
             Console.WriteLine(
                 $"{date}: PeakTime {data.Peak.Time.TimeOfDay}, " +
@@ -26,9 +22,7 @@ namespace TemperatureAnalysis.Smoulder
                 $"DailyAverage {data.AverageTemp:0.0}, " +
                 $"runningMaxTemp {_daysInMonth.OrderByDescending(d => d.Peak.Temperature).FirstOrDefault().Peak.Temperature:0.0}");
 
-            var peekedData = Peek();
-            var obj = new Day();
-            if (peekedData.Peak != null)
+            if (Peek(out var peekedData))
             {
                 if (peekedData.Peak.Time.Month > data.Peak.Time.Month || peekedData.Peak.Time.Year > data.Peak.Time.Year
                 ) //Current data is the last day of the Month
