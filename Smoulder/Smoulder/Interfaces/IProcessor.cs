@@ -12,5 +12,6 @@ namespace Smoulder.Interfaces
         void Enqueue(TDistributeData itemToEnqueue);
         int GetProcessorQueueCount();
         int GetDistributorQueueCount();
+        TProcessData Peek();
     }
 }

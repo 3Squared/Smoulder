@@ -9,5 +9,6 @@ namespace Smoulder.Interfaces
         int GetDistributorQueueCount();
         void OnNoQueueItem(CancellationToken cancellationToken);
         TDistributeData Dequeue();
+        TDistributeData Peek();
     }
 }

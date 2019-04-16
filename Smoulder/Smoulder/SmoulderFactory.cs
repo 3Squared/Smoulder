@@ -8,7 +8,7 @@ namespace Smoulder
         public Smoulder<TProcessData, TDistributeData> Build<TProcessData, TDistributeData>(
             ILoader<TProcessData> loader,
             IProcessor<TProcessData, TDistributeData> processor,
-            IDistributor<TDistributeData> distributor)
+            IDistributor<TDistributeData> distributor) where TProcessData : new() where TDistributeData : new()
         {
             //Create Queues
             ConcurrentQueue<TProcessData> processorQueue = new ConcurrentQueue<TProcessData>();

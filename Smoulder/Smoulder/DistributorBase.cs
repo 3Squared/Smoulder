@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase<T> : IDistributor<T>
+    public abstract class DistributorBase<T> : IDistributor<T> where T : new()
     {
         private ConcurrentQueue<T> _distributorQueue;
 
@@ -23,6 +24,11 @@ namespace Smoulder
         {
             _distributorQueue.TryDequeue(out var item);
             return item;
+        }
+
+        public T Peek()
+        {
+            return _distributorQueue.TryPeek(out var item) ? item : new T();
         }
 
         public void Start(CancellationToken cancellationToken)

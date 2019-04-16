@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData>
+    public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
     {
         private ConcurrentQueue<TProcessData> _processorQueue;
         private ConcurrentQueue<TDistributeData> _distributorQueue;
@@ -39,6 +39,11 @@ namespace Smoulder
         public int GetDistributorQueueCount()
         {
             return _distributorQueue.Count;
+        }
+
+        public TProcessData Peek()
+        {
+            return _processorQueue.TryPeek(out var item) ? item : new TProcessData();
         }
 
         public void Start(CancellationToken cancellationToken)
@@ -83,6 +88,7 @@ namespace Smoulder
 
         public virtual void OnNoQueueItem(CancellationToken cancellationToken)
         {
+            throw new NotImplementedException();
         }
     }
 }

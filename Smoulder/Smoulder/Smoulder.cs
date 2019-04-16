@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public class Smoulder<TProcessData, TDistributeData> : ISmoulder
+    public class Smoulder<TProcessData, TDistributeData> : ISmoulder where TProcessData : new() where TDistributeData : new()
     {
         private readonly ILoader<TProcessData> _loader;
         private readonly IProcessor<TProcessData, TDistributeData> _processor;

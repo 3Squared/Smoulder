@@ -2,6 +2,6 @@
 {
     public interface ISmoulderFactory
     {
-        Smoulder<TProcessData, TDistributeData> Build<TProcessData, TDistributeData>(ILoader<TProcessData> loader, IProcessor<TProcessData, TDistributeData> processor, IDistributor<TDistributeData> distributor);
+        Smoulder<TProcessData, TDistributeData> Build<TProcessData, TDistributeData>(ILoader<TProcessData> loader, IProcessor<TProcessData, TDistributeData> processor, IDistributor<TDistributeData> distributor) where TProcessData : new() where TDistributeData : new();
     }
 }

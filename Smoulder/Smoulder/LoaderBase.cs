@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class LoaderBase<T> : ILoader<T>
+    public abstract class LoaderBase<T> : ILoader<T> where T : new()
     {
         private ConcurrentQueue<T> _processorQueue;
 
