@@ -7,7 +7,6 @@ namespace Smoulder.Interfaces
     {
         void Start(CancellationToken cancellationToken);
         void Startup();
-        void Action(CancellationToken cancellationToken);
         void Finalise();
         void OnError(Exception e);
     }

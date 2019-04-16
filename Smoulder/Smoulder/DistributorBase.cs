@@ -9,26 +9,28 @@ namespace Smoulder
     public abstract class DistributorBase<T> : IDistributor<T> where T : new()
     {
         private ConcurrentQueue<T> _distributorQueue;
+        private BlockingCollection<T> _blockingDistributorQueue;
+        protected int Timeout = 1000;
 
         public void RegisterDistributorQueue(ConcurrentQueue<T> distributorQueue)
         {
             _distributorQueue = distributorQueue;
+            _blockingDistributorQueue = new BlockingCollection<T>(distributorQueue);
         }
 
         public int GetDistributorQueueCount()
         {
-            return _distributorQueue.Count;
+            return _blockingDistributorQueue.Count;
         }
 
-        public T Dequeue()
+        public bool Peek(out T item)
         {
-            _distributorQueue.TryDequeue(out var item);
-            return item;
+            return _distributorQueue.TryPeek(out item);
         }
 
-        public T Peek()
+        public bool Dequeue(out T item)
         {
-            return _distributorQueue.TryPeek(out var item) ? item : new T();
+            return _blockingDistributorQueue.TryTake(out item, Timeout);
         }
 
         public void Start(CancellationToken cancellationToken)
@@ -38,13 +40,13 @@ namespace Smoulder
             {
                 try
                 {
-                    if (_distributorQueue.IsEmpty)
+                    if (_blockingDistributorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
-                        OnNoQueueItem(cancellationToken);
+                        Action(item, cancellationToken);
                     }
                     else
                     {
-                        Action(cancellationToken);
+                        OnNoQueueItem(cancellationToken);
                     }
                 }
                 catch (Exception e)
@@ -58,7 +60,7 @@ namespace Smoulder
         {
         }
 
-        public virtual void Action(CancellationToken cancellationToken)
+        public virtual void Action(T item, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

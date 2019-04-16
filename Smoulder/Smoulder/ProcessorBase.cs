@@ -8,42 +8,44 @@ namespace Smoulder
     public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
     {
         private ConcurrentQueue<TProcessData> _processorQueue;
-        private ConcurrentQueue<TDistributeData> _distributorQueue;
+        private BlockingCollection<TProcessData> _blockingProcessorQueue;
+        private BlockingCollection<TDistributeData> _blockingDistributorQueue;
+        protected int Timeout = 1000;
 
         public void RegisterProcessorQueue(ConcurrentQueue<TProcessData> processorQueue)
         {
             _processorQueue = processorQueue;
+            _blockingProcessorQueue = new BlockingCollection<TProcessData>(processorQueue);
         }
 
         public void RegisterDistributorQueue(ConcurrentQueue<TDistributeData> distributorQueue)
         {
-            _distributorQueue = distributorQueue;
-        }
-
-        public TProcessData Dequeue()
-        {
-            _processorQueue.TryDequeue(out var item);
-            return item;
+            _blockingDistributorQueue = new BlockingCollection<TDistributeData>(distributorQueue);
         }
 
         public void Enqueue(TDistributeData itemToEnqueue)
         {
-            _distributorQueue.Enqueue(itemToEnqueue);
+            _blockingDistributorQueue.Add(itemToEnqueue);
         }
 
         public int GetProcessorQueueCount()
         {
-            return _processorQueue.Count;
+            return _blockingProcessorQueue.Count;
         }
 
         public int GetDistributorQueueCount()
         {
-            return _distributorQueue.Count;
+            return _blockingDistributorQueue.Count;
         }
 
-        public TProcessData Peek()
+        public bool Peek(out TProcessData item)
         {
-            return _processorQueue.TryPeek(out var item) ? item : new TProcessData();
+            return _processorQueue.TryPeek(out item);
+        }
+
+        public bool Dequeue(out TProcessData item)
+        {
+            return _blockingProcessorQueue.TryTake(out item, Timeout);
         }
 
         public void Start(CancellationToken cancellationToken)
@@ -53,13 +55,13 @@ namespace Smoulder
             {
                 try
                 {
-                    if (_processorQueue.IsEmpty)
+                    if (_blockingProcessorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
-                        OnNoQueueItem(cancellationToken);
+                        Action(item, cancellationToken);
                     }
                     else
                     {
-                        Action(cancellationToken);
+                        OnNoQueueItem(cancellationToken);
                     }
                 }
                 catch (Exception e)
@@ -73,7 +75,7 @@ namespace Smoulder
         {
         }
 
-        public virtual void Action(CancellationToken cancellationToken)
+        public virtual void Action(TProcessData processData, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
