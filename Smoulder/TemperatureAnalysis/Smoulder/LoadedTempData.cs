@@ -1,5 +1,4 @@
 ﻿using System;
-using Smoulder.Interfaces;
 
 namespace TemperatureAnalysis.Smoulder
 {
