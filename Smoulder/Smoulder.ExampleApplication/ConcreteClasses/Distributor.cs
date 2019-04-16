@@ -5,38 +5,26 @@ using Smoulder.Interfaces;
 
 namespace Smoulder.ExampleApplication.ConcreteClasses
 {
-    public class Distributor : DistributorBase
+    public class Distributor : DistributorBase<DistributeDataObject>
     {
         public override void Action(CancellationToken cancellationToken)
         {
-            if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
-            {
-                var data = (DistributeDataObject) queueItem;
+                var data = Dequeue();
                 //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
                 Random rng = new Random();
                 Task.Delay(rng.Next(1, 250));
-            }
         }
 
         public override void Finalise()
         {
-            Console.WriteLine("Starting Distributor finalisation." + DistributorQueue.Count + " items left to process");
-
-            while (DistributorQueue.Count != 0)
+            while (GetDistributorQueueCount() != 0)
             {
-                if (DistributorQueue.TryDequeue(out IDistributeDataObject queueItem))
-                {
-                    var data = (DistributeDataObject)queueItem;
+                    var data = Dequeue();
                     //Console.WriteLine(data.DataValue1 + ":" + data.DataValue2);
                     Random rng = new Random();
-                }
-                else
-                {
-                    break;
-                }
             }
 
-            Console.WriteLine("Finished Distributor finalisation." + DistributorQueue.Count + " items left to process");
+            Console.WriteLine("Finished Distributor finalisation." + GetDistributorQueueCount() + " items left to process");
         }
     }
 }

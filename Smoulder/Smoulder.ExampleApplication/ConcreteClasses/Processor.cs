@@ -5,55 +5,43 @@ using Smoulder.Interfaces;
 
 namespace Smoulder.ExampleApplication.ConcreteClasses
 {
-    public class Processor : ProcessorBase
+    public class Processor : ProcessorBase<ProcessDataObject,DistributeDataObject>
     {
         public override void Action(CancellationToken cancellationToken)
         {
-            if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
-            {
-                //Console.WriteLine("Processing");
-                var data = (ProcessDataObject) queueItem;
+                var data = Dequeue();
                 var result = new DistributeDataObject
                 {
                     DataValue1 = data.DataValue,
                     DataValue2 = data.DataValue / 2
                 };
 
-                DistributorQueue.Enqueue(result);
+                Enqueue(result);
 
                 Random rng = new Random();
                 Task.Delay(rng.Next(1,1000));
-            }
         }
 
         public override void Finalise()
         {
-            Console.WriteLine("Starting Processor finalisation." + ProcessorQueue.Count + " items left to process");
+            Console.WriteLine("Starting Processor finalisation." + GetProcessorQueueCount() + " items left to process");
 
-            while (ProcessorQueue.Count != 0)
+            while (GetProcessorQueueCount() != 0)
             {
-                if (ProcessorQueue.TryDequeue(out IProcessDataObject queueItem))
-                {
-                    //Console.WriteLine("Processing");
-                    var data = (ProcessDataObject) queueItem;
+                    var data = Dequeue();
                     var result = new DistributeDataObject
                     {
                         DataValue1 = data.DataValue,
                         DataValue2 = data.DataValue / 2
                     };
 
-                    DistributorQueue.Enqueue(result);
+                    Enqueue(result);
 
                     Random rng = new Random();
                     Task.Delay(rng.Next(1, 1000));
-                }
-                else
-                {
-                    break;
-                }
             }
 
-            Console.WriteLine("Finished Processor finalisation." + ProcessorQueue.Count + " items left to process");
+            Console.WriteLine("Finished Processor finalisation." + GetProcessorQueueCount() + " items left to process");
         }
     }
 }

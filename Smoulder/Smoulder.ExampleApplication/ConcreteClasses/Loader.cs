@@ -4,18 +4,17 @@ using System.Threading.Tasks;
 
 namespace Smoulder.ExampleApplication.ConcreteClasses
 {
-    public class Loader : LoaderBase
+    public class Loader : LoaderBase<ProcessDataObject>
     {
         private int _count;
         public override void Action(CancellationToken cancellationToken)
         {
             //Console.WriteLine("Loading");
-            var data = new ProcessDataObject {DataValue = _count};
+            var data = new ProcessDataObject { DataValue = _count};
             _count++;
-            ProcessorQueue.Enqueue(data);
+            Enqueue(data);
             Random rng = new Random();
             Task.Delay(rng.Next(1, 500));
-            throw new Exception();
         }
 
         public override void Finalise()
@@ -23,7 +22,7 @@ namespace Smoulder.ExampleApplication.ConcreteClasses
             Task.Delay(500);
         }
 
-        public override void CatchError(Exception e)
+        public override void OnError(Exception e)
         {
             Console.WriteLine("Error caught:" + e);
         }

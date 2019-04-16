@@ -6,7 +6,7 @@ using Smoulder;
 
 namespace TemperatureAnalysis.Smoulder
 {
-    public class Loader : LoaderBase
+    public class Loader : LoaderBase<LoadedTempData>
     {
         private bool _finished = false;
         private const DayOfWeek StartOfWeek = DayOfWeek.Monday;
@@ -41,7 +41,7 @@ namespace TemperatureAnalysis.Smoulder
                         (potentialTempData.Time.TimeOfDay >= _startOfDay &&
                          potentialTempData.Time.TimeOfDay <= _endOfDay))
                     {
-                        ProcessorQueue.Enqueue(potentialTempData);
+                        Enqueue(potentialTempData);
                     }
                 }
                 _finished = true;

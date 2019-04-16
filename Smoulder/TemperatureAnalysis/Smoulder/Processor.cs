@@ -9,29 +9,22 @@ using TemperatureAnalysis.TempSpecificClasses;
 
 namespace TemperatureAnalysis.Smoulder
 {
-    public class Processor : ProcessorBase
+    public class Processor : ProcessorBase<LoadedTempData, Day>
     {
         List<LoadedTempData> dayData = new List<LoadedTempData>();
 
         public override void Action(CancellationToken cancellationToken)
         {
             var data = new LoadedTempData {Id = -1};
-            if (ProcessorQueue.TryDequeue(out var incomingData))
-            {
-                data = (LoadedTempData) incomingData;
+                data = Dequeue();
                 dayData.Add(data);
 
-                var peekedData = new LoadedTempData();
-                if (ProcessorQueue.TryPeek(out var incomingPeakedData))
-                {
-                    peekedData = (LoadedTempData) incomingPeakedData;
-                }
-
-                if (peekedData.Time.Date > data.Time.Date) //Current data is the last measurement of the day
+            var peekedData = Peek();
+                if (peekedData != null && peekedData.Time.Date > data.Time.Date) //Current data is the last measurement of the day
                 {
                     var peak = dayData.OrderBy(x => x.Temperature).Last();
 
-                    DistributorQueue.Enqueue(new Day
+                    Enqueue(new Day
                     {
                         Count = dayData.Count,
                         AverageTemp = dayData.Sum(ltd => ltd.Temperature) / dayData.Count,
@@ -47,12 +40,11 @@ namespace TemperatureAnalysis.Smoulder
                     });
                     dayData = new List<LoadedTempData>();
                 }
-            }
         }
 
-        public override async void Inaction(CancellationToken cancellationToken)
+        public override void OnNoQueueItem(CancellationToken cancellationToken)
         {
-            await Task.Delay(500);
+            Thread.Sleep(500);
         }
     }
 }
