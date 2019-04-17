@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Smoulder.Interfaces
 {
-    public interface ILoader : IWorkerUnit
+    public interface ILoader<T> : IWorkerUnit
     {
-        void RegisterProcessorQueue(ConcurrentQueue<IProcessDataObject> processorQueue);
+        void RegisterProcessorQueue(BlockingCollection<T> processorQueue);
+        int GetProcessorQueueCount();
+        void Enqueue(T itemToEnqueue);
     }
 }

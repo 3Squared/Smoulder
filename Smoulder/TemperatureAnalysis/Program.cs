@@ -11,21 +11,14 @@ namespace TemperatureAnalysis
         {
             var smoulderFactory = new SmoulderFactory();
             var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
-            smoulder.Start().Wait();
+            smoulder.Start();
 
-            Thread.Sleep(5000);
+            Thread.Sleep(15000);
 
-            smoulder.Stop().Wait();
+            smoulder.Stop();
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
-        }
-
-
-        // TODO Having Smoulder.Smoulder sucks, need a name change for one of them
-        public void StartSmoulder(global::Smoulder.Smoulder smoulder)
-        {
-            
         }
     }
 }

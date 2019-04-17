@@ -1,9 +1,8 @@
 ﻿using System;
-using Smoulder.Interfaces;
 
 namespace TemperatureAnalysis.Smoulder
 {
-    public class LoadedTempData : IProcessDataObject
+    public class LoadedTempData
     {
         public int Id;
         public DateTime Time;

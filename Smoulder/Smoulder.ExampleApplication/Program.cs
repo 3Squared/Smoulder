@@ -9,7 +9,7 @@ namespace Smoulder.ExampleApplication
         static void Main(string[] args)
         {
             var smoulderFactory = new SmoulderFactory();
-            var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
+            var smoulder = smoulderFactory.Build<ProcessDataObject, DistributeDataObject>(new Loader(), new Processor(), new Distributor());
 
             GetReport(smoulder);
 
@@ -31,7 +31,7 @@ namespace Smoulder.ExampleApplication
             GetReport(smoulder);
         }
 
-        public static void GetReport(Smoulder smoulder)
+        public static void GetReport(Smoulder<ProcessDataObject, DistributeDataObject> smoulder)
         {
             Console.WriteLine("Processor Items: " + smoulder.ProcessorQueueItems);
             Console.WriteLine("Distributor Items: " + smoulder.DistributorQueueItems);

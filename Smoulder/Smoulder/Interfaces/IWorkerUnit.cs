@@ -1,13 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
 
 namespace Smoulder.Interfaces
 {
     public interface IWorkerUnit
     {
-        Task Start(CancellationToken cancellationToken, IStartupParameters startupParameters);
-        Task Start(CancellationToken cancellationToken);
-        Task Action(CancellationToken cancellationToken);
-        Task Finalise();
+        void Start(CancellationToken cancellationToken);
+        void Startup();
+        void Finalise();
+        void OnError(Exception e);
     }
 }
