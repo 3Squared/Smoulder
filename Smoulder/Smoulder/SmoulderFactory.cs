@@ -8,18 +8,25 @@ namespace Smoulder
         public Smoulder<TProcessData, TDistributeData> Build<TProcessData, TDistributeData>(
             ILoader<TProcessData> loader,
             IProcessor<TProcessData, TDistributeData> processor,
-            IDistributor<TDistributeData> distributor) where TProcessData : new() where TDistributeData : new()
+            IDistributor<TDistributeData> distributor, int processorQueueBound = 0, int distributorQueueBound = 0) where TProcessData : new() where TDistributeData : new()
         {
             //Create Queues
-            ConcurrentQueue<TProcessData> processorQueue = new ConcurrentQueue<TProcessData>();
-            ConcurrentQueue<TDistributeData> distributorQueue = new ConcurrentQueue<TDistributeData>();
+            ConcurrentQueue<TProcessData> underlyingProcessQueue = new ConcurrentQueue<TProcessData>();
+            BlockingCollection<TProcessData> processorQueue = processorQueueBound > 0
+                ? new BlockingCollection<TProcessData>(underlyingProcessQueue, processorQueueBound)
+                : new BlockingCollection<TProcessData>(underlyingProcessQueue);
+
+            ConcurrentQueue<TDistributeData> underlyingDistributorQueue = new ConcurrentQueue<TDistributeData>();
+            BlockingCollection<TDistributeData> distributorQueue = distributorQueueBound > 0
+                ? new BlockingCollection<TDistributeData>(underlyingDistributorQueue,distributorQueueBound)
+                : new BlockingCollection<TDistributeData>(underlyingDistributorQueue);
 
             //Hooks units up to Queues
             loader.RegisterProcessorQueue(processorQueue);
-            processor.RegisterProcessorQueue(processorQueue);
+            processor.RegisterProcessorQueue(processorQueue, underlyingProcessQueue);
 
             processor.RegisterDistributorQueue(distributorQueue);
-            distributor.RegisterDistributorQueue(distributorQueue);
+            distributor.RegisterDistributorQueue(distributorQueue, underlyingDistributorQueue);
 
             //Creates a Smoulder encapsulating the units
             var smoulder =

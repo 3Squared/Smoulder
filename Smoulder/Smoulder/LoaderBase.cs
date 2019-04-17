@@ -7,13 +7,11 @@ namespace Smoulder
 {
     public abstract class LoaderBase<T> : ILoader<T> where T : new()
     {
-        private ConcurrentQueue<T> _processorQueue;
-        private BlockingCollection<T> _blockingProcessorQueue;
+        private BlockingCollection<T> _processorQueue;
 
-        public void RegisterProcessorQueue(ConcurrentQueue<T> processorQueue)
+        public void RegisterProcessorQueue(BlockingCollection<T> processorQueue)
         {
             _processorQueue = processorQueue;
-            _blockingProcessorQueue = new BlockingCollection<T>(processorQueue);
         }
 
         public int GetProcessorQueueCount()
@@ -23,7 +21,7 @@ namespace Smoulder
 
         public void Enqueue(T itemToEnqueue)
         {
-            _blockingProcessorQueue.Add(itemToEnqueue);
+            _processorQueue.Add(itemToEnqueue);
         }
 
         public void Start(CancellationToken cancellationToken)

@@ -5,31 +5,31 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase<T> : IDistributor<T> where T : new()
+    public abstract class DistributorBase<TDistributeData> : IDistributor<TDistributeData> where TDistributeData : new()
     {
-        private ConcurrentQueue<T> _distributorQueue;
-        private BlockingCollection<T> _blockingDistributorQueue;
+        private BlockingCollection<TDistributeData> _distributorQueue;
+        private ConcurrentQueue<TDistributeData> _underlyingQueue;
         protected int Timeout = 1000;
 
-        public void RegisterDistributorQueue(ConcurrentQueue<T> distributorQueue)
+        public void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue, ConcurrentQueue<TDistributeData> underlyingQueue)
         {
             _distributorQueue = distributorQueue;
-            _blockingDistributorQueue = new BlockingCollection<T>(distributorQueue);
+            _underlyingQueue = underlyingQueue;
         }
 
         public int GetDistributorQueueCount()
         {
-            return _blockingDistributorQueue.Count;
+            return _distributorQueue.Count;
         }
 
-        public bool Peek(out T item)
+        public bool Dequeue(out TDistributeData item)
         {
-            return _distributorQueue.TryPeek(out item);
+            return _distributorQueue.TryTake(out item, Timeout);
         }
 
-        public bool Dequeue(out T item)
+        public bool Peek(out TDistributeData item)
         {
-            return _blockingDistributorQueue.TryTake(out item, Timeout);
+            return _underlyingQueue.TryPeek(out item);
         }
 
         public void Start(CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ namespace Smoulder
             {
                 try
                 {
-                    if (_blockingDistributorQueue.TryTake(out var item, Timeout, cancellationToken))
+                    if (_distributorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
                         Action(item, cancellationToken);
                     }
@@ -59,7 +59,7 @@ namespace Smoulder
         {
         }
 
-        public virtual void Action(T item, CancellationToken cancellationToken)
+        public virtual void Action(TDistributeData item, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

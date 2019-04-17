@@ -10,8 +10,8 @@ namespace Smoulder
         private readonly ILoader<TProcessData> _loader;
         private readonly IProcessor<TProcessData, TDistributeData> _processor;
         private readonly IDistributor<TDistributeData> _distributor;
-        private readonly ConcurrentQueue<TProcessData> _processorQueue;
-        private readonly ConcurrentQueue<TDistributeData> _distributorQueue;
+        private readonly BlockingCollection<TProcessData> _processorQueue;
+        private readonly BlockingCollection<TDistributeData> _distributorQueue;
 
         private readonly CancellationTokenSource _loaderCancellationTokenSource;
         private readonly CancellationTokenSource _processorCancellationTokenSource;
@@ -21,7 +21,7 @@ namespace Smoulder
         public int DistributorQueueItems => _distributorQueue.Count;
 
         public Smoulder(ILoader<TProcessData> loader, IProcessor<TProcessData, TDistributeData> processor, IDistributor<TDistributeData> distributor,
-            ConcurrentQueue<TProcessData> processorQueue, ConcurrentQueue<TDistributeData> distributorQueue)
+            BlockingCollection<TProcessData> processorQueue, BlockingCollection<TDistributeData> distributorQueue)
         {
             _loader = loader;
             _processor = processor;

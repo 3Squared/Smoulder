@@ -5,11 +5,11 @@ namespace Smoulder.Interfaces
 {
     public interface IDistributor<TDistributeData> : IWorkerUnit
     {
-        void RegisterDistributorQueue(ConcurrentQueue<TDistributeData> distributorQueue);
+        void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue, ConcurrentQueue<TDistributeData> underlyingQueue);
         int GetDistributorQueueCount();
         void Action(TDistributeData incomingProcessData, CancellationToken cancellationToken);
         void OnNoQueueItem(CancellationToken cancellationToken);
-        bool Peek(out TDistributeData item);
         bool Dequeue(out TDistributeData item);
+        bool Peek(out TDistributeData item);
     }
 }
