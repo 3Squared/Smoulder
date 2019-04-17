@@ -11,6 +11,7 @@ namespace TemperatureAnalysis.Smoulder
     public class Distributor : DistributorBase<Day>
     {
         private List<Day> _daysInMonth = new List<Day>();
+        private Day lastDay = null;
         private List<MonthData> _months = new List<MonthData>();
 
         public override void Action(Day data, CancellationToken cancellationToken)
@@ -20,33 +21,33 @@ namespace TemperatureAnalysis.Smoulder
                 $"{date}: PeakTime {data.Peak.Time.TimeOfDay}, " +
                 $"PeakTemp {data.Peak.Temperature:0.0}, " +
                 $"DailyAverage {data.AverageTemp:0.0}, " +
-                $"runningMaxTemp {_daysInMonth.OrderByDescending(d => d.Peak.Temperature).FirstOrDefault().Peak.Temperature:0.0}");
+                $"runningMaxTemp {_daysInMonth.OrderByDescending(d => d.Peak.Temperature).FirstOrDefault()?.Peak.Temperature:0.0}");
 
-            if (Peek(out var peekedData))
+            if (lastDay != null && (lastDay.Peak.Time.Month < data.Peak.Time.Month || lastDay.Peak.Time.Year < data.Peak.Time.Year)
+            ) //Current data is the last day of the Month
             {
-                if (peekedData.Peak.Time.Month > data.Peak.Time.Month || peekedData.Peak.Time.Year > data.Peak.Time.Year
-                ) //Current data is the last day of the Month
+                _months.Add(new MonthData
                 {
-                    _months.Add(new MonthData
-                    {
-                        Average = _daysInMonth.Average(d => d.AverageTemp),
-                        AveragePeak = _daysInMonth.Average(d => d.Peak.Temperature),
-                        EndDate = _daysInMonth.OrderBy(d => d.Date).Last().Date,
-                        MaxPeak = _daysInMonth.OrderByDescending(d => d.Peak.Temperature).First().Peak,
-                        Minimum = _daysInMonth.OrderBy(d => d.Minimum).First().Minimum,
-                        StartDate = _daysInMonth.OrderBy(d => d.Date).First().Date,
-                        TotalCount = _daysInMonth.Sum(d => d.Count),
-                        Month = _daysInMonth.First().Date.Month,
-                        Year = _daysInMonth.First().Date.Year
-                    });
-                    _daysInMonth = new List<Day>();
-                }
+                    Average = _daysInMonth.Average(d => d.AverageTemp),
+                    AveragePeak = _daysInMonth.Average(d => d.Peak.Temperature),
+                    EndDate = _daysInMonth.OrderBy(d => d.Date).Last().Date,
+                    MaxPeak = _daysInMonth.OrderByDescending(d => d.Peak.Temperature).First().Peak,
+                    Minimum = _daysInMonth.OrderBy(d => d.Minimum).First().Minimum,
+                    StartDate = _daysInMonth.OrderBy(d => d.Date).First().Date,
+                    TotalCount = _daysInMonth.Sum(d => d.Count),
+                    Month = _daysInMonth.First().Date.Month,
+                    Year = _daysInMonth.First().Date.Year
+                });
+                _daysInMonth = new List<Day>();
             }
+
+            _daysInMonth.Add(data);
+            lastDay = data;
         }
 
-        public override async void OnNoQueueItem(CancellationToken cancellationToken)
+        public override void OnNoQueueItem(CancellationToken cancellationToken)
         {
-            await Task.Delay(500);
+            Thread.Sleep(500);
         }
         public override void OnError(Exception e)
         {

@@ -19,7 +19,7 @@ namespace TemperatureAnalysis.Smoulder
         {
             if (_finished)
             {
-                await Task.Delay(1000);
+                Thread.Sleep(1000);
                 return;
             }
             using (var reader = new StreamReader(@"TemperatureData.csv"))
