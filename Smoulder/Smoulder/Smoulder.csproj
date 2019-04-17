@@ -13,8 +13,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.0.0</Version>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
-    <PackageReleaseNotes>Action() split into Action() and Inaction() based on if there are items in upstream queues</PackageReleaseNotes>
+    <FileVersion>3.0.0.0</FileVersion>
+    <PackageReleaseNotes>Implement Generics, removed all Thread.Sleep(n), added error handling for bulkier logic inside of Smoulder object</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
