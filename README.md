@@ -44,7 +44,6 @@ The `Action(TData item)` method on a workerUnit is the main payload. This is wha
     public override void Action(TProcessData item CancellationToken cancellationToken)
     {
         TDistributeData outgoingData = Do.Something(item);
-            
         Enqueue(rawData);
     }
 
