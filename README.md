@@ -42,12 +42,10 @@ Any of these methods has access to:
 The `Action(TData item)` method on a workerUnit is the main payload. This is what will be called continuously until the `Smoulder.Stop()` method is called. A reccommended format for the action method for a processor would be:
 
     public override void Action(TProcessData item CancellationToken cancellationToken)
-       {
-          TDistributeData outgoingData = Do.Something(item);
+    {
+        TDistributeData outgoingData = Do.Something(item);
             
-            //Pass the transformed data to the distributor
-            Enqueue(rawData); //
-        }
+        Enqueue(rawData);
     }
 
 #### Available methods
