@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Smoulder.ExampleApplication.ConcreteClasses;
 
 namespace Smoulder.ExampleApplication
 {
@@ -8,27 +6,50 @@ namespace Smoulder.ExampleApplication
     {
         static void Main(string[] args)
         {
+            var fakeRepository = new ExampleRepository();
             var smoulderFactory = new SmoulderFactory();
-            var smoulder = smoulderFactory.Build<ProcessDataObject, DistributeDataObject>(new Loader(), new Processor(), new Distributor());
 
+            //Smoulder created using poor mans dependency injection
+            var smoulder = smoulderFactory.Build(new ExampleLoader(), new ExampleProcessor(fakeRepository), new ExampleDistributor());
+
+            //Nothing is running yet, so both queues have 0 items on them
             GetReport(smoulder);
 
+            //Start smoulder running at system start up
             smoulder.Start();
 
+            //Queues now have items on them, data filtering through smoulder
             GetReport(smoulder);
 
-            for (int i = 0; i < 50; i++)
+            //Leave smoulder running indefinately
+            for (var i = 0; i < 50; i++)
             {
                 System.Threading.Thread.Sleep(100);
                 GetReport(smoulder);
             }
 
-            Task.Factory.StartNew(() => smoulder.Stop());
+            //System can be paused, stop the smoulder object
+            smoulder.Stop();
+
+            Console.WriteLine("Smoulder has been paused, waiting for 3 seconds before restarting");
+            System.Threading.Thread.Sleep(3000);
+            Console.WriteLine("Smoulder restarting");
+            //Smoulder can be restarted
+            smoulder.Start();
 
             GetReport(smoulder);
 
-            System.Threading.Thread.Sleep(10000);
+            for (var i = 0; i < 50; i++)
+            {
+                System.Threading.Thread.Sleep(100);
+                GetReport(smoulder);
+            }
+
+            smoulder.Stop();
+
             GetReport(smoulder);
+            Console.WriteLine("Press enter to finish the Smoulder demonstration process");
+            Console.ReadLine();
         }
 
         public static void GetReport(Smoulder<ProcessDataObject, DistributeDataObject> smoulder)

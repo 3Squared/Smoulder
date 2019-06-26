@@ -1,4 +1,4 @@
-﻿namespace Smoulder.ExampleApplication.ConcreteClasses
+﻿namespace Smoulder.ExampleApplication
 {
     public class ProcessDataObject
     {
