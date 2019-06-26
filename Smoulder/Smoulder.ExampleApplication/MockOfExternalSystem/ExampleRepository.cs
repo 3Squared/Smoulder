@@ -16,12 +16,12 @@ namespace Smoulder.ExampleApplication
 
         public void ResetConnection()
         {
-           // Save some data to the database 
+           // Reset the database connection whenever smoulder is (re)started
         }
 
         public void Dispose()
         {
-            //Close down a connection
+            //Close down the connection, sweep under the rug etc
         }
     }
 }

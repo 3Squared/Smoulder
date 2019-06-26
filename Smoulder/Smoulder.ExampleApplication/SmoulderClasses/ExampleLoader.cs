@@ -23,7 +23,9 @@ namespace Smoulder.ExampleApplication
 
         public override void Startup()
         {
+            //Initialise some variables
             _rng = new Random();
+            _count = 0;
             Console.WriteLine("Loader initialised");
         }
 

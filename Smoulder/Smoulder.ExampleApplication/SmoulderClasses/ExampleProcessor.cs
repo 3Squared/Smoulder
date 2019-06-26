@@ -10,7 +10,7 @@ namespace Smoulder.ExampleApplication
 
         public ExampleProcessor(ExampleRepository repostiory)
         {
-            //Constructor is called on creation of Object, do any dependency injection here
+            //Constructor is called on creation, do any dependency injection here
             _repostiory = repostiory;
         }
 
