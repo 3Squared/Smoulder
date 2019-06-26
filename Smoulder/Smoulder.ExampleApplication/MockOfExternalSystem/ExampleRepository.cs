@@ -23,5 +23,10 @@ namespace Smoulder.ExampleApplication
         {
             //Close down the connection, sweep under the rug etc
         }
+
+        public void CleanupDataInDownTime()
+        {
+            //Do some cleanup process in the downtime between items on the queue
+        }
     }
 }

@@ -41,6 +41,11 @@ namespace Smoulder.ExampleApplication
             Console.WriteLine("Processor Initialised");
         }
 
+        public override void OnEmptyQueue(CancellationToken cancellationToken)
+        {
+            _repostiory.CleanupDataInDownTime();
+        }
+
         public override void Finalise()
         {
             Console.WriteLine("Starting Processor finalisation." + GetProcessorQueueCount() + " items left to process");

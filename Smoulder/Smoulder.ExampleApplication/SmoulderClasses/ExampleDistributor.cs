@@ -15,6 +15,7 @@ namespace Smoulder.ExampleApplication
         }
 
         //No need to override Startup()
+        //No need for the downtime between items on queue, so didn't override OnNoQueueItem()
         //Live dangerously by ignoring any errors by not overriding OnError()
 
         public override void Finalise()

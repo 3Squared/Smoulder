@@ -61,7 +61,7 @@ namespace Smoulder
                     }
                     else
                     {
-                        OnNoQueueItem(cancellationToken);
+                        OnEmptyQueue(cancellationToken);
                     }
                 }
                 catch (Exception e)
@@ -88,9 +88,8 @@ namespace Smoulder
         {
         }
 
-        public virtual void OnNoQueueItem(CancellationToken cancellationToken)
+        public virtual void OnEmptyQueue(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
         }
     }
 }
