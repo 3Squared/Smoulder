@@ -1,7 +1,6 @@
 # Smoulder
 
 ## TODO
-- Use to create an azure function to work out any potential issues with that.
 - Rename OnNoQueueItem() to something less blathery
 
 ## Introduction
