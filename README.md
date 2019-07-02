@@ -116,7 +116,9 @@ In the worked example, a console app creates a Smoulder object using the Smoulde
 
 Reading through the worked example will be a good introduction to the different ways Smoulder can be used, it is commented to guide a user through each of the worker units. The Processor is using the most features, if speed is valued over complete comprehension then start there.
 
+Imagine while reading this that the Loader is hooked up to some external data source, the processor is saving the incoming messages to archive and the distributor is building up some aggregate data for report.
+
 #Futurology
 
-It is considered being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units. This will be a significant breaking change but could cut out some awkwardness in creating the Smoulder object in the first place.
+Being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units in a fluent/compositional style. This will be a significant breaking change but could cut out some awkwardness in creating the Smoulder object in the first place.
 
