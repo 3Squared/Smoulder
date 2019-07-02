@@ -5,9 +5,14 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class LoaderBase<T> : ILoader<T> where T : new()
+    public class LoaderBase<T> : ILoader<T> where T : new()
     {
         private BlockingCollection<T> _processorQueue;
+
+        private Func<CancellationToken, T> _action = token => throw new NotImplementedException();
+        private Action<Exception> _onError = e => throw new Exception("The inner exception was throw by Smoulder.Loader", e);
+        private Action _startup = () => { };
+        private Action _finalise = () => { };
 
         public void RegisterProcessorQueue(BlockingCollection<T> processorQueue)
         {
@@ -31,7 +36,7 @@ namespace Smoulder
             {
                 try
                 {
-                    Action(cancellationToken);
+                    Enqueue(Action(cancellationToken));
                 }
                 catch (Exception e)
                 {
@@ -42,19 +47,42 @@ namespace Smoulder
 
         public virtual void Startup()
         {
+            _startup();
         }
 
-        public virtual void Action(CancellationToken cancellationToken)
+        public void SetStartup(Action startup)
         {
-            throw new NotImplementedException();
+            _startup = startup;
+        }
+
+        public virtual T Action(CancellationToken cancellationToken)
+        {
+            return _action(cancellationToken);
+        }
+
+        public void SetAction(Func<CancellationToken, T> action)
+        {
+            _action = action;
         }
 
         public virtual void Finalise()
         {
+            _finalise();
+        }
+
+        public virtual void SetFinalise(Action finalise)
+        {
+            _finalise = finalise;
         }
 
         public virtual void OnError(Exception e)
         {
+            _onError(e);
+        }
+
+        public virtual void SetOnError(Action<Exception> onError)
+        {
+            _onError = onError;
         }
     }
 }

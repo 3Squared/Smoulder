@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Smoulder.Interfaces
 {
@@ -7,5 +9,8 @@ namespace Smoulder.Interfaces
         void RegisterProcessorQueue(BlockingCollection<T> processorQueue);
         int GetProcessorQueueCount();
         void Enqueue(T itemToEnqueue);
+
+        void SetAction(Func<CancellationToken, T> action);
+        T Action(CancellationToken cancellationToken);
     }
 }

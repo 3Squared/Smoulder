@@ -1,16 +1,33 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
+    public class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
     {
         private BlockingCollection<TProcessData> _processorQueue;
         private ConcurrentQueue<TProcessData> _underlyingQueue;
         private BlockingCollection<TDistributeData> _distributorQueue;
         protected int Timeout = 1000;
+
+        private Func<TProcessData, CancellationToken, TDistributeData> _action = (data,token) => throw new NotImplementedException();
+        private Action<CancellationToken> _onEmptyQueue = token => { };
+        private Action _startup = () => { };
+        private Action _finalise = () => { };
+        private Action<Exception> _onError = e => {
+            if (e is OperationCanceledException)
+            {
+                //OperationCanceled is expected by the cancellation of the token at the tryTake from the queue
+            }
+            else
+            {
+                //Exception wrapped to preserve stack trace
+                throw new Exception("The inner exception was throw by Smoulder.Processor", e);
+            }
+        };
 
         public void RegisterProcessorQueue(BlockingCollection<TProcessData> processorQueue, ConcurrentQueue<TProcessData> underlyingQueue)
         {
@@ -57,7 +74,7 @@ namespace Smoulder
                 {
                     if (_processorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
-                        Action(item, cancellationToken);
+                        Enqueue(Action(item, cancellationToken));
                     }
                     else
                     {
@@ -73,23 +90,53 @@ namespace Smoulder
 
         public virtual void Startup()
         {
+            _startup();
         }
 
-        public virtual void Action(TProcessData processData, CancellationToken cancellationToken)
+        public void SetStartup(Action startup)
         {
-            throw new NotImplementedException();
+            _startup = startup;
+
+        }
+
+        public virtual TDistributeData Action(TProcessData processData, CancellationToken cancellationToken)
+        {
+            return _action(processData,cancellationToken);
+        }
+
+        public virtual void SetAction(Func<TProcessData, CancellationToken, TDistributeData> action)
+        {
+            _action = action;
         }
 
         public virtual void Finalise()
         {
+            _finalise();
+        }
+
+        public void SetFinalise(Action finalise)
+        {
+            _finalise = finalise;
         }
 
         public virtual void OnError(Exception e)
         {
+            _onError(e);
+        }
+
+        public void SetOnError(Action<Exception> onError)
+        {
+            _onError = onError;
         }
 
         public virtual void OnEmptyQueue(CancellationToken cancellationToken)
         {
+            _onEmptyQueue(cancellationToken);
+        }
+
+        public void SetOnEmptyQueue(Action<CancellationToken> onEmptyQueue)
+        {
+            _onEmptyQueue = onEmptyQueue;
         }
     }
 }
