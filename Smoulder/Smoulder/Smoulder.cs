@@ -57,15 +57,76 @@ namespace Smoulder
             }
         }
 
-        public Smoulder<TProcessData, TDistributeData> SetLoaderAction(Action<CancellationToken> action)
+        public Smoulder<TProcessData, TDistributeData> SetLoaderAction(Func<CancellationToken, TProcessData> action)
         {
             _loader.SetAction(action);
             return this;
         }
-
         public Smoulder<TProcessData, TDistributeData> SetLoaderFinalise(Action finalise)
         {
             _loader.SetFinalise(finalise);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetLoaderOnError(Action<Exception> onError)
+        {
+            _loader.SetOnError(onError);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetLoaderStartup(Action startup)
+        {
+            _loader.SetStartup(startup);
+            return this;
+        }
+
+        public Smoulder<TProcessData, TDistributeData> SetProcessorAction(Func<TProcessData, CancellationToken, TDistributeData> action)
+        {
+            _processor.SetAction(action);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetProcessorOnEmptyQueue(Action<CancellationToken> onEmptyQueue)
+        {
+            _processor.SetOnEmptyQueue(onEmptyQueue);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetProcessorFinalise(Action finalise)
+        {
+            _processor.SetFinalise(finalise);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetProcessorOnError(Action<Exception> onError)
+        {
+            _processor.SetOnError(onError);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetProcessorStartup(Action startup)
+        {
+            _processor.SetStartup(startup);
+            return this;
+        }
+
+        public Smoulder<TProcessData, TDistributeData> SetDistributorAction(Action<TDistributeData, CancellationToken> action)
+        {
+            _distributor.SetAction(action);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetDistributorOnEmptyQueue(Action<CancellationToken> onEmptyQueue)
+        {
+            _distributor.SetOnEmptyQueue(onEmptyQueue);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetDistributorFinalise(Action finalise)
+        {
+            _distributor.SetFinalise(finalise);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetDistributorOnError(Action<Exception> onError)
+        {
+            _distributor.SetOnError(onError);
+            return this;
+        }
+        public Smoulder<TProcessData, TDistributeData> SetDistributorStartup(Action startup)
+        {
+            _distributor.SetStartup(startup);
             return this;
         }
     }

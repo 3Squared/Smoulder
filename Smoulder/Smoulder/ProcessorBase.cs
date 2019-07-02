@@ -5,14 +5,14 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
+    public class ProcessorBase<TProcessData, TDistributeData> : IProcessor<TProcessData, TDistributeData> where TProcessData : new()
     {
         private BlockingCollection<TProcessData> _processorQueue;
         private ConcurrentQueue<TProcessData> _underlyingQueue;
         private BlockingCollection<TDistributeData> _distributorQueue;
         protected int Timeout = 1000;
 
-        private Action<TProcessData, CancellationToken> _action = (data,token) => throw new NotImplementedException();
+        private Func<TProcessData, CancellationToken, TDistributeData> _action = (data,token) => throw new NotImplementedException();
         private Action<CancellationToken> _onEmptyQueue = token => { };
         private Action<Exception> _onError = e => { };
         private Action _startup = () => { };
@@ -63,7 +63,7 @@ namespace Smoulder
                 {
                     if (_processorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
-                        Action(item, cancellationToken);
+                        Enqueue(Action(item, cancellationToken));
                     }
                     else
                     {
@@ -88,12 +88,12 @@ namespace Smoulder
 
         }
 
-        public virtual void Action(TProcessData processData, CancellationToken cancellationToken)
+        public virtual TDistributeData Action(TProcessData processData, CancellationToken cancellationToken)
         {
-            _action(processData,cancellationToken);
+            return _action(processData,cancellationToken);
         }
 
-        public virtual void SetAction(Action<TProcessData, CancellationToken> action)
+        public virtual void SetAction(Func<TProcessData, CancellationToken, TDistributeData> action)
         {
             _action = action;
         }

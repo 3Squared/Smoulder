@@ -5,7 +5,7 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class DistributorBase<TDistributeData> : IDistributor<TDistributeData> where TDistributeData : new()
+    public class DistributorBase<TDistributeData> : IDistributor<TDistributeData> where TDistributeData : new()
     {
         private BlockingCollection<TDistributeData> _distributorQueue;
         private ConcurrentQueue<TDistributeData> _underlyingQueue;

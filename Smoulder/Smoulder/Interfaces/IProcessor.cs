@@ -14,8 +14,8 @@ namespace Smoulder.Interfaces
         bool Dequeue(out TProcessData item);
         bool Peek(out TProcessData item);
 
-        void Action(TProcessData incomingProcessData, CancellationToken cancellationToken);
-        void SetAction(Action<TProcessData, CancellationToken> action);
+        TDistributeData Action(TProcessData incomingProcessData, CancellationToken cancellationToken);
+        void SetAction(Func<TProcessData, CancellationToken, TDistributeData> action);
 
         void OnEmptyQueue(CancellationToken cancellationToken);
         void SetOnEmptyQueue(Action<CancellationToken> action);

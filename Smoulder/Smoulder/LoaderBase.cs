@@ -5,11 +5,11 @@ using Smoulder.Interfaces;
 
 namespace Smoulder
 {
-    public abstract class LoaderBase<T> : ILoader<T> where T : new()
+    public class LoaderBase<T> : ILoader<T> where T : new()
     {
         private BlockingCollection<T> _processorQueue;
 
-        private Action<CancellationToken> _action = token => throw new NotImplementedException();
+        private Func<CancellationToken, T> _action = token => throw new NotImplementedException();
         private Action<Exception> _onError = e => { };
         private Action _startup = () => { };
         private Action _finalise = () => { };
@@ -36,7 +36,7 @@ namespace Smoulder
             {
                 try
                 {
-                    Action(cancellationToken);
+                    Enqueue(Action(cancellationToken));
                 }
                 catch (Exception e)
                 {
@@ -55,12 +55,12 @@ namespace Smoulder
             _startup = startup;
         }
 
-        public virtual void Action(CancellationToken cancellationToken)
+        public virtual T Action(CancellationToken cancellationToken)
         {
-            _action(cancellationToken);
+            return _action(cancellationToken);
         }
 
-        public void SetAction(Action<CancellationToken> action)
+        public void SetAction(Func<CancellationToken, T> action)
         {
             _action = action;
         }

@@ -10,7 +10,7 @@ namespace Smoulder.Interfaces
         int GetProcessorQueueCount();
         void Enqueue(T itemToEnqueue);
 
-        void SetAction(Action<CancellationToken> action);
-        void Action(CancellationToken cancellationToken);
+        void SetAction(Func<CancellationToken, T> action);
+        T Action(CancellationToken cancellationToken);
     }
 }
