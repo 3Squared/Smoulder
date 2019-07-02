@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Smoulder.Interfaces;
@@ -54,6 +55,18 @@ namespace Smoulder
                 _distributorCancellationTokenSource.Cancel();
                 _distributor.Finalise();
             }
+        }
+
+        public Smoulder<TProcessData, TDistributeData> SetLoaderAction(Action<CancellationToken> action)
+        {
+            _loader.SetAction(action);
+            return this;
+        }
+
+        public Smoulder<TProcessData, TDistributeData> SetLoaderFinalise(Action finalise)
+        {
+            _loader.SetFinalise(finalise);
+            return this;
         }
     }
 }

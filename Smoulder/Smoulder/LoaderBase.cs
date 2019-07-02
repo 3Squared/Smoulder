@@ -9,6 +9,11 @@ namespace Smoulder
     {
         private BlockingCollection<T> _processorQueue;
 
+        private Action<CancellationToken> _action = token => throw new NotImplementedException();
+        private Action<Exception> _onError = e => { };
+        private Action _startup = () => { };
+        private Action _finalise = () => { };
+
         public void RegisterProcessorQueue(BlockingCollection<T> processorQueue)
         {
             _processorQueue = processorQueue;
@@ -42,19 +47,42 @@ namespace Smoulder
 
         public virtual void Startup()
         {
+            _startup();
+        }
+
+        public void SetStartup(Action startup)
+        {
+            _startup = startup;
         }
 
         public virtual void Action(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _action(cancellationToken);
+        }
+
+        public void SetAction(Action<CancellationToken> action)
+        {
+            _action = action;
         }
 
         public virtual void Finalise()
         {
+            _finalise();
+        }
+
+        public virtual void SetFinalise(Action finalise)
+        {
+            _finalise = finalise;
         }
 
         public virtual void OnError(Exception e)
         {
+            _onError(e);
+        }
+
+        public virtual void SetOnError(Action<Exception> onError)
+        {
+            _onError = onError;
         }
     }
 }

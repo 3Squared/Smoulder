@@ -12,6 +12,12 @@ namespace Smoulder
         private BlockingCollection<TDistributeData> _distributorQueue;
         protected int Timeout = 1000;
 
+        private Action<TProcessData, CancellationToken> _action = (data,token) => throw new NotImplementedException();
+        private Action<CancellationToken> _onEmptyQueue = token => { };
+        private Action<Exception> _onError = e => { };
+        private Action _startup = () => { };
+        private Action _finalise = () => { };
+
         public void RegisterProcessorQueue(BlockingCollection<TProcessData> processorQueue, ConcurrentQueue<TProcessData> underlyingQueue)
         {
             _processorQueue = processorQueue;
@@ -73,23 +79,53 @@ namespace Smoulder
 
         public virtual void Startup()
         {
+            _startup();
+        }
+
+        public void SetStartup(Action startup)
+        {
+            _startup = startup;
+
         }
 
         public virtual void Action(TProcessData processData, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _action(processData,cancellationToken);
+        }
+
+        public virtual void SetAction(Action<TProcessData, CancellationToken> action)
+        {
+            _action = action;
         }
 
         public virtual void Finalise()
         {
+            _finalise();
+        }
+
+        public void SetFinalise(Action finalise)
+        {
+            _finalise = finalise;
         }
 
         public virtual void OnError(Exception e)
         {
+            _onError(e);
+        }
+
+        public void SetOnError(Action<Exception> onError)
+        {
+            _onError = onError;
         }
 
         public virtual void OnEmptyQueue(CancellationToken cancellationToken)
         {
+            _onEmptyQueue(cancellationToken);
+        }
+
+        public void SetOnEmptyQueue(Action<CancellationToken> onEmptyQueue)
+        {
+            _onEmptyQueue = onEmptyQueue;
         }
     }
 }
