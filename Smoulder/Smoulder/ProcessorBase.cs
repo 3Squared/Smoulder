@@ -20,7 +20,7 @@ namespace Smoulder
         private Action<Exception> _onError = e => {
             if (e is OperationCanceledException)
             {
-                //TasKCancelled is expected by the cancellation of the token at the tryTake form the queue
+                //OperationCanceled is expected by the cancellation of the token at the tryTake from the queue
             }
             else
             {

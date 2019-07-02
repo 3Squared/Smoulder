@@ -100,7 +100,7 @@ namespace Smoulder.ExampleApplication
             //System can be paused, stop the smoulder object
             smoulder.Stop();
 
-            Console.WriteLine("Smoulder has been paused, waiting for 3 seconds before restarting");
+            Console.WriteLine("Smoulder has been paused, waiting for 1.5 seconds before restarting");
             Thread.Sleep(1500);
             Console.WriteLine("Smoulder restarting");
             //Smoulder can be restarted
