@@ -1,4 +1,4 @@
-﻿namespace Smoulder.ExampleApplication
+﻿namespace Smoulder.ExampleApplication.SmoulderClasses
 {
     public class DistributeDataObject
     {

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Smoulder.ExampleApplication.MockOfExternalSystem;
+using Smoulder.ExampleApplication.SmoulderClasses;
 
 namespace Smoulder.ExampleApplication
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -12,7 +14,6 @@ namespace Smoulder.ExampleApplication
             var smoulderFactory = new SmoulderFactory();
 
             //Object oriented methodology
-            //Smoulder created using poor mans dependency injection
             var firstSmoulder = smoulderFactory.Build(new ExampleLoader(), new ExampleProcessor(fakeRepository), new ExampleDistributor(), 50000);
 
             //Run Demo with first Smoulder

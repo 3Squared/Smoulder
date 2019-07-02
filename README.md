@@ -11,8 +11,6 @@ Responsible for computing the results from the provided data packet, retains nec
 These produced results are bundled into a results object that is then made available to the Distributor by means of a message queue.
 ### Distributor
 Responsible for calculating the up-to-date status of the tracked statistics and providing them to external components that are polling for the results. This decouples the reporting and processing elements, ensuring that the polling for results doesn’t affect processor performance and large data volumes won’t slow down returning of results. The distributor could also be configured to publish data to an external service or database while still allowing the processor to remain agnostic or update a database with updated values. The action the distributor takes is deliberately open-ended, allowing developers to tailor the result to each individual need.
-## Cost-effectiveness
-In both examples, the processing of the information is done in large discrete batch processes. This means the graph of processing power over time has large spikes in it. This has significant cost implications as services and products are migrated to Azure. To accommodate for these large peaks, the Azure tier needs to be set at a sufficiently powerful level to be able to absorb the sudden increases in load. This pattern is shown in the TrainData dtu usage. Due to the slow-burn nature of the proposed system the Azure hosting service could be set to a lower and less expensive tier. In the example, hypothetical and exaggerated data, the area under each graph is similar, but the Azure tier can be set to be less powerful, reducing the amount of wasted resource being paid for. This has shown to be a reality, with the hosting for TD.net being turned down from P1 to S0 Azure tier, a power of magnitude cheaper.
 
 ## Setup
 ### Data Objects
@@ -23,19 +21,19 @@ Create `Loader`, `Processor` and `Distributor` classes that implement `ILoader`,
 
 The implementation of the worker units should:
 - implement relevant interface
-- Extend the relevant workerUnitBase (i.e. `myProcessor: ProcessorBase<myProcessData,myDistributeData>, IProcessor`)
+- Extend the relevant workerUnitBase (i.e. `public class MyProcessor: ProcessorBase<MyProcessData,MyDistributeData>, IProcessor`)
 - Override the `Action()` method
 
 Optionally, the implementation can override:
-- one of the overloads of `Startup()`, which is called when the Smoulder.Start() method is called. This allows you to initialise any variables from the passed in startupParameters object that can't be done in the constructor.
-- the `Finalise()` which will be called when the Smoulder.Stop() method is called. This could be used to ensure all the remaining data is processed before the smoulder shuts down.
-- the `OnNoQueueItem()` method, which is called if there was nothing on the queue for $Timeout number of milliseconds
-- the `OnError()` method, which is called if there is an uncaught error in Action(), OnNoQueueItem() or the method inside of smoulder that contians the dequeuing logic.
+- the `Startup()` method, which is called when the Smoulder.Start() method is called. This allows you to initialise any variables that can't be done in the constructor, or that you want to initialise every time the Smoulder object is started, not just at object creation.
+- the `Finalise()` which will be called when the Smoulder.Stop() method is called. This could be used to ensure all the remaining data is processed before the smoulder shuts down, close any open connections etc.
+- the `OnEmptyQueue()` method, which is called if there was nothing on the queue for $Timeout number of milliseconds
+- the `OnError()` method, which is called if there is an uncaught error in Action(), OnEmptyQueue() or the method inside of smoulder that contains the dequeuing logic.
 
 Any of these methods has access to:
 - 
 #### Action(TData item)
-The `Action(TData item)` method on a workerUnit is the main payload. This is what will be called continuously until the `Smoulder.Stop()` method is called. A reccommended format for the action method for a processor would be:
+The `Action(TData item)` method on a workerUnit is the main payload. This is what will be called continuously until the `Smoulder.Stop()` method is called. A recommended format for the action method for a processor would be:
 
     public override void Action(TProcessData item CancellationToken cancellationToken)
     {
@@ -62,7 +60,7 @@ The `Action(TData item)` method on a workerUnit is the main payload. This is wha
 
 to cycle through all the remaining items on the queue for example.
 
-- `bool Peek(out TProcessData item)` - Allows for peeking the `ProcessorQueue`. This is implemented here as BlockingCollections don't allow it normally due to multithreading concerns. There is only one producer and consumer for each queue, so Peek is assumed to be safe. If you break it, let me know.
+- `bool Peek(out TProcessData item)` - Allows for peeking the `ProcessorQueue`. This is implemented here as BlockingCollections don't allow it normally due to multi-threading concerns. There is only one producer and consumer for each queue, so Peek is assumed to be safe. If you break it, let me know.
 - `int GetDistributorQueueCount()` - Duh
 - `int GetProcessorQueueCount()` - Duh
 
@@ -72,10 +70,10 @@ to cycle through all the remaining items on the queue for example.
 - `int GetDistributorQueueCount()` - Duh
 
 #### Startup()
-Startup is deliberatly distict to the constructor so that a Smoulder can be restarted after being stopped. The constructor will only run when the workerUnits are instantiated, but the Startup method is called every time the Smoulder.Start() method is called. An example for a use for this is closing a connection to a message queue in the Finalise() method and connecting in the Startup() method.
+Startup is deliberately distinct to the constructor so that a Smoulder can be restarted after being stopped. The constructor will only run when the workerUnits are instantiated, but the Startup method is called every time the Smoulder.Start() method is called. An example for a use for this is closing a connection to a message queue in the Finalise() method and connecting in the Startup() method.
 
 ### Instantiation
-Once classes for the workerUnits have been created, a Smoulder object can be instantiated. This is acheived with following two lines:
+Once classes for the workerUnits have been created, a Smoulder object can be instantiated. This is achieved with following two lines:
 
     var smoulderFactory = new SmoulderFactory();
     var smoulder = smoulderFactory.Build(new Loader(), new Processor(), new Distributor());
@@ -102,41 +100,22 @@ The following line sets the maximum number of ProcessData objects to 50 and the 
 The `Enqueue()` method on `Loader`s and `Processor`s will block until an item is removed.
 
 ## Dequeue timeout
-By default smoulder will wait `1000`milliseconds before giving up waiting for an item on the queue and calling `OnNoQueueItem()` instead. This can be changed by setting the `Timeout` attribute on the `Processor` and `Distributor` objects.
+By default smoulder will wait `1000`milliseconds before giving up waiting for an item on the queue and calling `OnEmptyQueue()` instead. This can be changed by setting the `Timeout` attribute on the `Processor` and `Distributor` objects.
 If the timeout is set to `-1`, it will wait forever or until an item arrives on the queue.
 
 ## Multiple Smoulders with IOC
-Say you want two smoulder objects in the same application and you're using an IOC container. You have two different implementations of `ILoader`. The best way to split these up so you're IOC container knows which is which is to create two interfaces, say `IProcessorA` and `IProcessorB` that both implement `IProcessor`. Then you can hook your IOC up using these two interfaces and everything is peachy.
+Say you want two smoulder objects in the same application and you're using an IOC container. You have two different implementations of `ILoader`. The best way to split these up so your IOC container knows which is which is to create two interfaces, say `IProcessorA` and `IProcessorB` that both implement the  `Smoulder.Interfaces.IProcessor` interface. Then you can hook your IOC up using these two interfaces and everything is peachy.
 
-## Working Examples
-### Random Number Generator
-This simply generates random numbers and passes them through, doing some nominal work on them to show that data could get from one end to the other.
+## Worked Example - Random Number Pipe
+This simply generates random numbers and passes them through, doing some nominal work on them to show that data can get from one end to the other. In doing so it attempts to show off some of the different configurations worker units can be created with and acts as a quick check that everything works nicely together. A successful build should be able to run this console application without any errors.
 
-### Temperature Analysis
-Takes a cutdown temperature data file generated by a USB dongle and finds useful temperature stats about the office. This is obviously a batch process, which just doesn't fit the continuous data setup that smoulder encourages. I suggest the best way to use smoulder in a batch process would be to on the timed event create a smoulder, then when all the work is done stop the smoulder and wait for the next timed interval. **This would require the ability for the worker units to report they are finished back up to the Smoulder object. At the moment the Smoulder object can cancel the worker units, but not the other way round**
+In the worked example, a console app creates a Smoulder object using the SmoulderFactory and sets it running.  Regular reports are printed while it is running to show progress to the user. This could be left indefinitely, but is instead stopped. The object is then started again to showcase the ability to stop and start the Smoulder object.
 
-### StockMarket Analysis
-The point of this is obviously not to actually make any money, but the www.alphavantage.co API is free, easier to access than train data source, the dataset is pretty interesting and most importantly the dataset is continuous. This will allow me to set this running and watch memory/CPU usage over time to find any leaks and/or allow me to optimise how the system runs. The loader will scrape data for a small number of stocks, the processor will decide if one should buy/sell the stock and save the stock data to the database and the distributor will tell the user if a buy/sell action should be taken. I should be able later to look at the historic price and buy/sell actions to see if the process would have made any money.
+Reading through the worked example will be a good introduction to the different ways Smoulder can be used, it is commented to guide a user through each of the worker units. The Processor is using the most features, if speed is valued over complete comprehension then start there.
 
-Changing the Task.Delays to Thread.Sleeps has made the CPU usage make sense, no longer maxes out at 100%. Means the StockMarket exercise has already been fortuitous. Further, it's lead to optional parameters for the startup() methods, a good step forward methinks.
+Imagine while reading this that the Loader is hooked up to some external data source, the processor is saving the incoming messages to archive and the distributor is building up some aggregate data for report.
 
-#### Planned Improvements
-There are improvements I would like to make to this program, but they are domain specific and wouldn't help the Smoulder project progress. That said:
-- Get the stock price at the point of the buy/sell decision in the distributor so I can work out if the system would actually have worked.
-- Instead of taking .First from the slowK and slowD data series, use all the data returned, then analyse all the new data. This will significantly improve the granularity of the decision making process and there is easily the processing time to spare.
+#Futurology
 
-### TrainData Consumer
-Martin can give me an ActiveMQ with some real train data on it coming down from TD.NET. It's his test connection, so this would be a good use for it until the project kicks off. The throughput will be much higher than the StockMarket Analysis so it should make for a good progression. This is not intended to be a prototype, first version nor to see the light of day. It is intended to be a test bed for Smoulder using high-volume, relevant, real-world data.
+Being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units in a fluent/compositional style. This should make it compatible with a functional code style.
 
-Do I want 1 Smoulder for each data type? That would be preferable methinks. Wonder if I can reuse the loader if I write it generic. Good thing the startup() is configurable...
-
-Edit - SmoulderV3 is now being used in the TrainData project to do just this.
-
-## Example hypothetical use cases
-### PAM KPI Calculation
-Smoulder could see use as an alternative to the KPI calculations in PAM. The current system is like the trainData processing, doing large batches of processing all at once. At a set periodicity, the current system takes every single wagon in the database and calculates the KPI statistics for it, saving each result as a row in a kpi stats table. Smoulder could be setup to slowly continuously trawl through the wagon table and calculate the KPI states at that point in time for each wagon and update the relevant row in the kpi stats table. Ultimately, the total amount of processing would be the same, but the change in peak processing would be pronounced.
-### RDD
-Processing large volumes of incoming data
-
-### Rostering
-Standardise the internal workings of their microservices the sync data with EDS

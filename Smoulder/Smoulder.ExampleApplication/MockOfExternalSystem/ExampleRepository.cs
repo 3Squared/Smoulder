@@ -1,6 +1,7 @@
 ﻿using System;
+using Smoulder.ExampleApplication.SmoulderClasses;
 
-namespace Smoulder.ExampleApplication
+namespace Smoulder.ExampleApplication.MockOfExternalSystem
 {
     public class ExampleRepository : IExampleRepository, IDisposable
     {

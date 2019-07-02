@@ -36,7 +36,11 @@ namespace Smoulder
             {
                 try
                 {
-                    Enqueue(Action(cancellationToken));
+                    var output = Action(cancellationToken);
+                    if (output != null)
+                    {
+                        Enqueue(output);
+                    }
                 }
                 catch (Exception e)
                 {
