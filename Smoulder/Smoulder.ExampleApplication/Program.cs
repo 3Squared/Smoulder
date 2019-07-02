@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Smoulder.ExampleApplication.MockOfExternalSystem;
+using Smoulder.ExampleApplication.SmoulderClasses;
 
 namespace Smoulder.ExampleApplication
 {
