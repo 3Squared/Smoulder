@@ -8,17 +8,17 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
     {
         private int _count;
         private Random _rng;
-        public override void Action(CancellationToken cancellationToken)
+        public override ProcessDataObject Action(CancellationToken cancellationToken)
         {
             //Get some data from upstream process
             var data = new ProcessDataObject { DataValue = _count};
             _count++;
 
-            //Send it to Processor
-            Enqueue(data);
-
             //Simulate some processing time
             Task.Delay(_rng.Next(1, 500));
+
+            //Send it to Processor
+            return data;
         }
 
         public override void Startup()
@@ -36,7 +36,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
 
         public override void OnError(Exception e)
         {
-            Console.WriteLine("Error caught in Loader:" + e);
+            throw new Exception("Throw loader exception with inner exception attached", e);
         }
     }
 }

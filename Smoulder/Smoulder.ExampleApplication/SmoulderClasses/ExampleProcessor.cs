@@ -7,18 +7,18 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
 {
     public class ExampleProcessor : ProcessorBase<ProcessDataObject,DistributeDataObject>
     {
-        readonly ExampleRepository _repostiory;
+        readonly ExampleRepository _repository;
 
         public ExampleProcessor(ExampleRepository repostiory)
         {
             //Constructor is called on creation, do any dependency injection here
-            _repostiory = repostiory;
+            _repository = repostiory;
         }
 
-        public override void Action(ProcessDataObject data, CancellationToken cancellationToken)
+        public override DistributeDataObject Action(ProcessDataObject data, CancellationToken cancellationToken)
         {
             //Pretend to save the data to an archive
-            _repostiory.SaveData(data);
+            _repository.SaveData(data);
 
             //Do some operation on the data to create a result
             var result = new DistributeDataObject
@@ -27,24 +27,24 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
                 DataValue2 = data.DataValue / 2
             };
 
-            //Send result to Distributor
-            Enqueue(result);
-
             //Simulate some processing time
             Random rng = new Random();
-            Task.Delay(rng.Next(1, 1000));
+            Task.Delay(rng.Next(1, 100));
+            
+            //Send result to Distributor
+            return result;
         }
 
         public override void Startup()
         {
             //Startup called if smoulder is turned off and back on again
-            _repostiory.ResetConnection();
+            _repository.ResetConnection();
             Console.WriteLine("Processor Initialised");
         }
 
         public override void OnEmptyQueue(CancellationToken cancellationToken)
         {
-            _repostiory.CleanupDataInDownTime();
+            _repository.CleanupDataInDownTime();
         }
 
         public override void Finalise()
@@ -56,7 +56,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
                 Action(data, new CancellationToken());
             }
 
-            _repostiory.Dispose();
+            _repository.Dispose();
 
             Console.WriteLine("Finished Processor finalisation." + GetProcessorQueueCount() + " items left to process");
         }
@@ -64,6 +64,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
         public override void OnError(Exception e)
         {
             throw new Exception("Throw processor exception with inner exception attached",e);
+
         }
     }
 }

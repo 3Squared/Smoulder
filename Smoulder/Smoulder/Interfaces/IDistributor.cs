@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 
 namespace Smoulder.Interfaces
@@ -7,9 +8,13 @@ namespace Smoulder.Interfaces
     {
         void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue, ConcurrentQueue<TDistributeData> underlyingQueue);
         int GetDistributorQueueCount();
-        void Action(TDistributeData incomingProcessData, CancellationToken cancellationToken);
-        void OnEmptyQueue(CancellationToken cancellationToken);
         bool Dequeue(out TDistributeData item);
         bool Peek(out TDistributeData item);
+
+        void Action(TDistributeData incomingProcessData, CancellationToken cancellationToken);
+        void SetAction(Action<TDistributeData, CancellationToken> action);
+
+        void OnEmptyQueue(CancellationToken cancellationToken);
+        void SetOnEmptyQueue(Action<CancellationToken> action);
     }
 }
