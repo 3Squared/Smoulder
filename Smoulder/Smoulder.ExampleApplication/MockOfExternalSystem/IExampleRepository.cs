@@ -1,4 +1,6 @@
-﻿namespace Smoulder.ExampleApplication
+﻿using Smoulder.ExampleApplication.SmoulderClasses;
+
+namespace Smoulder.ExampleApplication.MockOfExternalSystem
 {
     public interface IExampleRepository
     {

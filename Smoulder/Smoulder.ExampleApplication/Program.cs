@@ -1,4 +1,6 @@
 ﻿using System;
+using Smoulder.ExampleApplication.MockOfExternalSystem;
+using Smoulder.ExampleApplication.SmoulderClasses;
 
 namespace Smoulder.ExampleApplication
 {

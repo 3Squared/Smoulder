@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smoulder.ExampleApplication
+namespace Smoulder.ExampleApplication.SmoulderClasses
 {
     public class ExampleDistributor : DistributorBase<DistributeDataObject>
     {

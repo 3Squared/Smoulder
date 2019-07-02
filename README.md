@@ -110,5 +110,13 @@ If the timeout is set to `-1`, it will wait forever or until an item arrives on 
 Say you want two smoulder objects in the same application and you're using an IOC container. You have two different implementations of `ILoader`. The best way to split these up so your IOC container knows which is which is to create two interfaces, say `IProcessorA` and `IProcessorB` that both implement the  `Smoulder.Interfaces.IProcessor` interface. Then you can hook your IOC up using these two interfaces and everything is peachy.
 
 ## Worked Example - Random Number Pipe
-This simply generates random numbers and passes them through, doing some nominal work on them to show that data can get from one end to the other. In doing so it attempts to show off some of the different configurations worker units can be created with
+This simply generates random numbers and passes them through, doing some nominal work on them to show that data can get from one end to the other. In doing so it attempts to show off some of the different configurations worker units can be created with and acts as a quick check that everything works nicely together. A successful build should be able to run this console application without any errors.
+
+In the worked example, a console app creates a Smoulder object using the SmoulderFactory and sets it running.  Regular reports are printed while it is running to show progress to the user. This could be left indefinitely, but is instead stopped. The object is then started again to showcase the ability to stop and start the Smoulder object.
+
+Reading through the worked example will be a good introduction to the different ways Smoulder can be used, it is commented to guide a user through each of the worker units. The Processor is using the most features, if speed is valued over complete comprehension then start there.
+
+#Futurology
+
+It is considered being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units. This will be a significant breaking change but could cut out some awkwardness in creating the Smoulder object in the first place.
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Smoulder.ExampleApplication.MockOfExternalSystem;
 
-namespace Smoulder.ExampleApplication
+namespace Smoulder.ExampleApplication.SmoulderClasses
 {
     public class ExampleProcessor : ProcessorBase<ProcessDataObject,DistributeDataObject>
     {
-        ExampleRepository _repostiory;
+        readonly ExampleRepository _repostiory;
 
         public ExampleProcessor(ExampleRepository repostiory)
         {
