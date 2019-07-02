@@ -2,15 +2,15 @@
 
 namespace Smoulder.ExampleApplication
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             var fakeRepository = new ExampleRepository();
             var smoulderFactory = new SmoulderFactory();
 
-            //Smoulder created using poor mans dependency injection
-            var smoulder = smoulderFactory.Build(new ExampleLoader(), new ExampleProcessor(fakeRepository), new ExampleDistributor());
+            //Smoulder created using poor mans dependency injection to reduce project dependencies
+            var smoulder = smoulderFactory.Build(new ExampleLoader(), new ExampleProcessor(fakeRepository), new ExampleDistributor(), 50000);
 
             //Nothing is running yet, so both queues have 0 items on them
             GetReport(smoulder);
