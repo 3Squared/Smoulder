@@ -5,10 +5,6 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smoulder", "Smoulder\Smoulder.csproj", "{C5099BF9-CF00-40CA-BE43-9D874392B6AA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestBedProjects", "TestBedProjects", "{EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatureAnalysis", "TemperatureAnalysis\TemperatureAnalysis.csproj", "{CC024130-7820-40A3-8AED-019258B52B17}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smoulder.ExampleApplication", "Smoulder.ExampleApplication\Smoulder.ExampleApplication.csproj", "{2389F7D8-6BA9-4810-AD58-A311EE008FA1}"
 EndProject
 Global
@@ -21,19 +17,12 @@ Global
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5099BF9-CF00-40CA-BE43-9D874392B6AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC024130-7820-40A3-8AED-019258B52B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC024130-7820-40A3-8AED-019258B52B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC024130-7820-40A3-8AED-019258B52B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2389F7D8-6BA9-4810-AD58-A311EE008FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2389F7D8-6BA9-4810-AD58-A311EE008FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2389F7D8-6BA9-4810-AD58-A311EE008FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CC024130-7820-40A3-8AED-019258B52B17} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
-		{2389F7D8-6BA9-4810-AD58-A311EE008FA1} = {EF9D8DCE-FDE6-4C49-B64F-0521E188BFC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7F016F6-5D8C-43B4-89BA-2A464A24048E}

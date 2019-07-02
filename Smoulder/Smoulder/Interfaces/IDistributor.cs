@@ -8,7 +8,7 @@ namespace Smoulder.Interfaces
         void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue, ConcurrentQueue<TDistributeData> underlyingQueue);
         int GetDistributorQueueCount();
         void Action(TDistributeData incomingProcessData, CancellationToken cancellationToken);
-        void OnNoQueueItem(CancellationToken cancellationToken);
+        void OnEmptyQueue(CancellationToken cancellationToken);
         bool Dequeue(out TDistributeData item);
         bool Peek(out TDistributeData item);
     }

@@ -13,9 +13,9 @@ namespace Smoulder
         private readonly BlockingCollection<TProcessData> _processorQueue;
         private readonly BlockingCollection<TDistributeData> _distributorQueue;
 
-        private readonly CancellationTokenSource _loaderCancellationTokenSource;
-        private readonly CancellationTokenSource _processorCancellationTokenSource;
-        private readonly CancellationTokenSource _distributorCancellationTokenSource;
+        private CancellationTokenSource _loaderCancellationTokenSource;
+        private CancellationTokenSource _processorCancellationTokenSource;
+        private CancellationTokenSource _distributorCancellationTokenSource;
 
         public int ProcessorQueueItems => _processorQueue.Count;
         public int DistributorQueueItems => _distributorQueue.Count;
@@ -28,16 +28,15 @@ namespace Smoulder
             _distributor = distributor;
             _processorQueue = processorQueue;
             _distributorQueue = distributorQueue;
-
-            _loaderCancellationTokenSource = new CancellationTokenSource();
-            _processorCancellationTokenSource = new CancellationTokenSource();
-            _distributorCancellationTokenSource = new CancellationTokenSource();
         }
 
         public void Start()
         {
             lock (this)
             {
+                _loaderCancellationTokenSource = new CancellationTokenSource();
+                _processorCancellationTokenSource = new CancellationTokenSource();
+                _distributorCancellationTokenSource = new CancellationTokenSource();
                 Task.Factory.StartNew(() => _loader.Start(_loaderCancellationTokenSource.Token));
                 Task.Factory.StartNew(() => _processor.Start(_processorCancellationTokenSource.Token));
                 Task.Factory.StartNew(() => _distributor.Start(_distributorCancellationTokenSource.Token));

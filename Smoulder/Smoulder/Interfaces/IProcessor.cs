@@ -7,7 +7,7 @@ namespace Smoulder.Interfaces
     {
         void RegisterProcessorQueue(BlockingCollection<TProcessData> processorQueue, ConcurrentQueue<TProcessData> underlyingQueue);
         void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue);
-        void OnNoQueueItem(CancellationToken cancellationToken);
+        void OnEmptyQueue(CancellationToken cancellationToken);
         void Enqueue(TDistributeData itemToEnqueue);
         void Action(TProcessData incomingProcessData, CancellationToken cancellationToken);
         int GetProcessorQueueCount();
