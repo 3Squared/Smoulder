@@ -24,6 +24,7 @@ namespace Smoulder
             }
             else
             {
+                //Exception wrapped to preserve stack trace
                 throw new Exception("The inner exception was throw by Smoulder.Processor", e);
             }
         };
