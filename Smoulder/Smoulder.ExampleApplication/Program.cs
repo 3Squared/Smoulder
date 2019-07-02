@@ -63,8 +63,7 @@ namespace Smoulder.ExampleApplication
                 {
                     Random rng = new Random();
                     Task.Delay(rng.Next(1, 25));
-                })
-                .SetDistributorOnError(e => throw new Exception("Throw distributor exception with inner exception attached", e));
+                });
 
             //Run Demo with third Smoulder
             RunDemo(thirdSmoulder);

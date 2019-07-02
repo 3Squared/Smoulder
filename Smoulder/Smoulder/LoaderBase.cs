@@ -10,7 +10,7 @@ namespace Smoulder
         private BlockingCollection<T> _processorQueue;
 
         private Func<CancellationToken, T> _action = token => throw new NotImplementedException();
-        private Action<Exception> _onError = e => { };
+        private Action<Exception> _onError = e => throw new Exception("The inner exception was throw by Smoulder.Loader", e);
         private Action _startup = () => { };
         private Action _finalise = () => { };
 

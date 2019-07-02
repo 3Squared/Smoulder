@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Smoulder.Interfaces;
 
 namespace Smoulder
@@ -14,9 +15,18 @@ namespace Smoulder
 
         private Action<TDistributeData, CancellationToken> _action = (data, token) => throw new NotImplementedException();
         private Action<CancellationToken> _onEmptyQueue = token => { };
-        private Action<Exception> _onError = e => { };
         private Action _startup = () => { };
         private Action _finalise = () => { };
+        private Action<Exception> _onError = e => {
+            if (e is OperationCanceledException)
+            {
+                //TaskCancelled is expected by the cancellation of the token at the tryTake form the queue
+            }
+            else
+            {
+                throw new Exception("The inner exception was throw by Smoulder.Distributor", e);
+            }
+        };
 
         public void RegisterDistributorQueue(BlockingCollection<TDistributeData> distributorQueue, ConcurrentQueue<TDistributeData> underlyingQueue)
         {
