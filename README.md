@@ -120,5 +120,5 @@ Imagine while reading this that the Loader is hooked up to some external data so
 
 #Futurology
 
-Being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units in a fluent/compositional style. This will be a significant breaking change but could cut out some awkwardness in creating the Smoulder object in the first place.
+Being able to build up the worker units compositionally, with the developer just passing methods to the factory in order to build up the worker units in a fluent/compositional style. This should make it compatible with a functional code style.
 
