@@ -74,7 +74,11 @@ namespace Smoulder
                 {
                     if (_processorQueue.TryTake(out var item, Timeout, cancellationToken))
                     {
-                        Enqueue(Action(item, cancellationToken));
+                        var output = Action(item, cancellationToken);
+                        if(output != null)
+                        {
+                            Enqueue(output);
+                        }
                     }
                     else
                     {
