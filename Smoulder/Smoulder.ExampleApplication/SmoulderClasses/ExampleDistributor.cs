@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Smoulder.ExampleApplication.SmoulderClasses
 {
@@ -11,7 +10,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
             //Report data to a downsteam service, post it to another database, aggregate some data etc
 
             Random rng = new Random();
-            Task.Delay(rng.Next(1, 250));
+            Thread.Sleep(rng.Next(1, 250));
         }
 
         //No need to override Startup()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Smoulder.ExampleApplication.MockOfExternalSystem;
 
 namespace Smoulder.ExampleApplication.SmoulderClasses
@@ -29,7 +28,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
 
             //Simulate some processing time
             Random rng = new Random();
-            Task.Delay(rng.Next(1, 100));
+            Thread.Sleep(rng.Next(1, 100));
             
             //Send result to Distributor
             return result;
