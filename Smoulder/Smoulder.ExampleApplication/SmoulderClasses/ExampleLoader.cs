@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Smoulder.ExampleApplication.SmoulderClasses
 {
@@ -15,7 +14,7 @@ namespace Smoulder.ExampleApplication.SmoulderClasses
             _count++;
 
             //Simulate some processing time
-            Task.Delay(_rng.Next(1, 500));
+            Thread.Sleep(_rng.Next(1, 500));
 
             //Send it to Processor
             return data;
