@@ -34,7 +34,7 @@ Optionally, the implementation can override:
 - the `OnEmptyQueue()` method, which is called if there was nothing on the queue for $Timeout number of milliseconds
 - the `OnError()` method, which is called if there is an uncaught error in Action(), OnEmptyQueue() or the method inside of smoulder that contains the dequeuing logic.
 
-####Action method
+#### Action method
 #### Action(TData item)
 The `Action(TData item)` method on a workerUnit is the main payload and is the only one that must be implemented for the Smoulder object to be valid. This is what will be called continuously until the `Smoulder.Stop()` method is called. An example format for the action method for a processor would be:
 
@@ -53,11 +53,11 @@ The `Action(TData item)` method on a workerUnit is the main payload and is the o
 The returned `TDistributeData` object will be enqueued onto the distributor queue ready for the distributor to process. Returning null means nothing is enqueued.
 
 The signatures for the Action methods are as follows:
-#####Loader
+##### Loader
 `public TProcessData Action(CancellationToken cancellationToken)`
-#####Processor
+##### Processor
 `public TDistributeData Action(TProcessData item, CancellationToken cancellationToken)`
-#####Distributor
+##### Distributor
 `public void Action(TDistributeData item, CancellationToken cancellationToken)`
 
 #### Available methods
