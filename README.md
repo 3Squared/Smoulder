@@ -1,3 +1,5 @@
+![Forge Smoulder](ForgeSmoulder.png "Forge Smoulder")
+
 # Smoulder
 
 ## Introduction
