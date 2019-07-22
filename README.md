@@ -1,8 +1,13 @@
+![Forge Smoulder](ForgeSmoulder.png "Forge Smoulder")
+
 # Smoulder
 
 ## Introduction
 Smoulder meets the need for low-profile, slow burn processing of data in a non-time critical environment. Intended uses include aggregating statistics over a constant data stream and creating arbitrarily complex reports on large data volumes with the ability to take snapshots of the current resultant states without waiting for completion or interrupting the data processing. This is achieved by separating data preparation, processing and aggregation of results into separate loosely-coupled processes, linked together by defined data packets through internally accessible message queues.
+
 The entire system can be implemented by creating new concrete implementations of the base abstract interfaces, allowing for real flexibility in the applications the system can be used for. Each of the three parts of the system is built to be run in a separate thread, allowing performance to scale up or down depending on the hardware the system is hosted on and decoupling each process from the other. They will communicate with each other over two concurrent queues, a thread-safe feature of C#.
+
+Smoulder is part of the [Forge Framework](#Forge-Framework).
 ## System Description
 ### Loader
 This component is responsible for retrieving data and converting it into usable data packets. Data can then be bundled into a data packet containing multiple data points, or simply applied as a stream of single data points using a customisable data object. This stream of sanitised data is then made available to the Processor by means of an inter-thread message queue called the ProcessorQueue.
@@ -30,7 +35,7 @@ Optionally, the implementation can override:
 - the `OnEmptyQueue()` method, which is called if there was nothing on the queue for $Timeout number of milliseconds
 - the `OnError()` method, which is called if there is an uncaught error in Action(), OnEmptyQueue() or the method inside of smoulder that contains the dequeuing logic.
 
-####Action method
+#### Action method
 #### Action(TData item)
 The `Action(TData item)` method on a workerUnit is the main payload and is the only one that must be implemented for the Smoulder object to be valid. This is what will be called continuously until the `Smoulder.Stop()` method is called. An example format for the action method for a processor would be:
 
@@ -49,11 +54,11 @@ The `Action(TData item)` method on a workerUnit is the main payload and is the o
 The returned `TDistributeData` object will be enqueued onto the distributor queue ready for the distributor to process. Returning null means nothing is enqueued.
 
 The signatures for the Action methods are as follows:
-#####Loader
+##### Loader
 `public TProcessData Action(CancellationToken cancellationToken)`
-#####Processor
+##### Processor
 `public TDistributeData Action(TProcessData item, CancellationToken cancellationToken)`
-#####Distributor
+##### Distributor
 `public void Action(TDistributeData item, CancellationToken cancellationToken)`
 
 #### Available methods
@@ -155,3 +160,6 @@ Reading through the worked example will be a good introduction to the different 
 
 Imagine while reading this that the Loader is hooked up to some external data source, the processor is saving the incoming messages to archive and the distributor is building up some aggregate data for report.
 
+# Forge Framework
+
+The Forge Framework is a collection of open-source frameworks created by the team at [3Squared](https://github.com/3squared).
