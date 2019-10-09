@@ -11,10 +11,10 @@
     <PackageTags />
     <NeutralLanguage>en</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>5.0.1</Version>
-    <AssemblyVersion>5.0.0.1</AssemblyVersion>
-    <FileVersion>5.0.0.1</FileVersion>
-    <PackageReleaseNotes>Added support for functional style methodology</PackageReleaseNotes>
+    <Version>5.0.2</Version>
+    <AssemblyVersion>5.0.0.2</AssemblyVersion>
+    <FileVersion>5.0.0.2</FileVersion>
+    <PackageReleaseNotes>Added OnError try/catch to finalise method</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 

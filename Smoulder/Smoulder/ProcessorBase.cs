@@ -115,7 +115,14 @@ namespace Smoulder
 
         public virtual void Finalise()
         {
-            _finalise();
+            try
+            {
+                _finalise();
+            }
+            catch (Exception e)
+            {
+                OnError(e);
+            }
         }
 
         public void SetFinalise(Action finalise)

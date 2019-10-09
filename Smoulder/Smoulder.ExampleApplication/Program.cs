@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Smoulder.ExampleApplication.MockOfExternalSystem;
 using Smoulder.ExampleApplication.SmoulderClasses;
 
@@ -27,7 +26,7 @@ namespace Smoulder.ExampleApplication
                 {
                     var rng = new Random();
                     var data = new ProcessDataObject {DataValue = rng.Next()};
-                    Task.Delay(rng.Next(1, 50));
+                    Thread.Sleep(rng.Next(1, 50));
                     return data;
                 })
                 .SetProcessorAction((data, token) =>
@@ -40,14 +39,14 @@ namespace Smoulder.ExampleApplication
                     };
 
                     Random rng = new Random();
-                    Task.Delay(rng.Next(1, 100));
+                    Thread.Sleep(rng.Next(1, 100));
 
                     return result;
                 })
                 .SetDistributorAction((data, token) =>
                 {
                     Random rng = new Random();
-                    Task.Delay(rng.Next(1, 25));
+                    Thread.Sleep(rng.Next(1, 25));
                 })
                 .SetLoaderOnError(e => throw new Exception("Throw loader exception with inner exception attached", e))
                 .SetProcessorOnError(e => throw new Exception("Throw processor exception with inner exception attached", e))
@@ -63,7 +62,7 @@ namespace Smoulder.ExampleApplication
                 .SetDistributorAction((data, token) =>
                 {
                     Random rng = new Random();
-                    Task.Delay(rng.Next(1, 25));
+                    Thread.Sleep(rng.Next(1, 25));
                 });
 
             //Run Demo with third Smoulder
