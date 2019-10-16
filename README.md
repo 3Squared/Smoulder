@@ -127,7 +127,7 @@ If the timeout is set to `-1`, it will wait forever or until an item arrives on 
 ## Multiple Smoulders with IOC
 Say you want two smoulder objects in the same application and you're using an IOC container. You have two different implementations of `ILoader`. The best way to split these up so your IOC container knows which is which is to create two interfaces, say `IProcessorA` and `IProcessorB` that both implement the  `Smoulder.Interfaces.IProcessor` interface. Then you can hook your IOC up using these two interfaces and everything is peachy.
 
-#Functional/Compositional methodology
+# Functional/Compositional methodology
 
 There are methods on the Smoulder object that allow delegates to be passed that overwrite the default functionality. This allows a basic Smoulder to be set up without having to directly extend, override, instantiate and pass in worker unit instances. At it's most basic, a Smoulder can be created with:
 
